@@ -1,0 +1,16 @@
+[package]
+name = "bytecount_ffi"
+version = "0.1.0"
+authors = ["Vanessa McHale <vamchale@gmail.com>"]
+
+[lib]
+name = "bytecount_ffi"
+crate-type = [ "staticlib", "cdylib" ]
+
+[dependencies]
+bytecount = "0.6"
+libc = "0.2"
+
+[features]
+runtime-dispatch-simd = ["bytecount/runtime-dispatch-simd"]
+generic-simd = ["bytecount/generic-simd"]
