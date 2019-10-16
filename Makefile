@@ -4,7 +4,7 @@
 bytecount/target/release/libbytecount_ffi.so: bytecount/src/lib.rs bytecount/Cargo.toml
 	cd bytecount && cargo build --release
 
-target/wc-bench: atspkg.dhall bytecount/target/release/libbytecount_ffi.so
+target/wc-bench: atspkg.dhall test/wc-bench.dats SATS/wc.sats DATS/wc.dats bytecount/target/release/libbytecount_ffi.so
 	atspkg build target/wc-bench
 
 clean:
