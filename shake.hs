@@ -1,11 +1,12 @@
 #!/usr/bin/env cabal
 {- cabal:
-build-depends: base, shake
+build-depends: base, shake, shake-ats
 default-language: Haskell2010
 ghc-options: -Wall -threaded -rtsopts "-with-rtsopts=-I0 -qg -qb"
 -}
 
-import Development.Shake hiding ((*>))
+import           Development.Shake     hiding ((*>))
+import           Development.Shake.ATS
 
 main :: IO ()
 main = shakeArgs shakeOptions { shakeFiles = ".shake", shakeLint = Just LintBasic, shakeChange = ChangeModtimeAndDigestInput } $ do
@@ -13,10 +14,10 @@ main = shakeArgs shakeOptions { shakeFiles = ".shake", shakeLint = Just LintBasi
 
     "clean" ~> do
         unit $ cmd $ [ "rm", "-rf", "tags", "bytecount/rusty-tags.vi" ]
+        cleanATS
         removeFilesAfter "target" ["//*"]
         removeFilesAfter "bytecount/target" ["//*"]
         removeFilesAfter ".shake" ["//*"]
-        removeFilesAfter ".atspkg" ["//*"]
 
     "bytecount/target/release/libbytecount_ffi.so" %> \_ ->
         need ["bytecount/src/lib.rs", "bytecount/Cargo.toml"] *>
