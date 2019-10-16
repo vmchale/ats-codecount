@@ -10,6 +10,7 @@ crate-type = [ "staticlib", "cdylib" ]
 [dependencies]
 bytecount = "0.6"
 libc = "0.2"
+memchr = "2.2"
 
 [features]
 runtime-dispatch-simd = ["bytecount/runtime-dispatch-simd"]
