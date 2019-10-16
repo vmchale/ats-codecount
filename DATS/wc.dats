@@ -30,9 +30,13 @@ fn freadc_ {l:addr}{ sz : nat | sz > 0 }{ n : nat | n <= sz }(pf : !bytes_v(l, s
   end
 
 extern
-fn count_lines { l : addr | l != null }{m:nat}(!bytes_v(l, m) | ptr(l), bufsz : size_t(m)) :
+fn count_char { l : addr | l != null }{m:nat}(!bytes_v(l, m) | ptr(l), c : char, bufsz : size_t(m)) :
   [ n : nat | n <= m ] int(n) =
   "ext#"
+
+fn count_lines { l : addr | l != null }{m:nat}(pf : !bytes_v(l, m) | p : ptr(l), bufsz : size_t(m)) :
+  [ n : nat | n <= m ] int(n) =
+  count_char(pf | p, '\n', bufsz)
 
 implement empty_file =
   @{ lines = 0, blanks = 0, comments = 0, doc_comments = 0 } : file
@@ -47,7 +51,7 @@ implement free_st (st) =
 implement count_buf (pf | ptr, bufsz, st) =
   case+ st of
     | ~in_string (n) => let
-      // fromEnum '"' = 34
+      // 34 -> "
       val (pf0, pf1 | p2) = memchr(pf | ptr, 34, bufsz)
     in
       if ptr_is_null(p2) then
@@ -65,6 +69,7 @@ implement count_buf (pf | ptr, bufsz, st) =
             let
               val () = print(p2)
             in
+              // 92 -> \
               ptr1_pred<byte>(p2) = $UN.cast(92)
             end
           else
