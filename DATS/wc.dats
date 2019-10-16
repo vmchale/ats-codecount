@@ -13,9 +13,19 @@ fn sub_ptr1_ptr1_size { l0, l1 : addr | l0 >= l1 }(p1 : ptr(l0), p2 : ptr(l1)) :
 
 // bad (?) idea: use rawmemchr + append lol
 extern
-fn memchr { l : addr | l != null }{m:nat}{ n : nat | n <= m }(pf : bytes_v(l, m) | p : ptr(l), c : int, size_t(n)) :
+fn memchr { l : addr | l != null }{m:nat}{ n : nat | n <= m }(bytes_v(l,m) | ptr(l), int, size_t(n)) :
   [ l0 : addr | l0 == null || l0 >= l && l0-l <= m ] (bytes_v(l, l0-l), bytes_v(l0, l+m-l0)| ptr(l0)) =
   "mac#"
+
+extern
+fn memchr2 { l : addr | l != null }{m:nat}{ n : nat | n <= m }(!bytes_v(l, m) | ptr(l), char, char, size_t(n)) :
+  Option_vt([ k : nat | k <= n ] uint(k)) =
+  "ext#"
+
+extern
+fn memchr3 { l : addr | l != null }{m:nat}{ n : nat | n <= m }(!bytes_v(l, m) | ptr(l), char, char, char, size_t(n)) :
+  Option_vt([ k : nat | k <= n ] uint(k)) =
+  "ext#"
 
 fn freadc_ {l:addr}{ sz : nat | sz > 0 }{ n : nat | n <= sz }(pf : !bytes_v(l, sz)
                                                              | inp : !FILEptr1, bufsize : size_t(sz), p : ptr(l)) :
@@ -23,7 +33,7 @@ fn freadc_ {l:addr}{ sz : nat | sz > 0 }{ n : nat | n <= sz }(pf : !bytes_v(l, s
   let
     extern
     castfn as_fileref(x : !FILEptr1) :<> FILEref
-    
+
     var n = $extfcall(size_t(n), "fread", p, sizeof<byte>, bufsize - 1, as_fileref(inp))
   in
     n
@@ -90,9 +100,16 @@ implement count_buf (pf | ptr, bufsz, st) =
     | in_block_comment (_) => empty_file
     | line_comment () => empty_file
     | regular() => let
-      var ret_file: file = empty_file
-      var strlines = count_lines(pf | ptr, bufsz)
-      val () = ret_file.lines := strlines
+      val next_char_offset = memchr3(pf | ptr, '\n', '"', '/', bufsz)
+      val ret = case+ next_char_offset of
+        | ~Some_vt (char_ptr) => let
+          var ret_file: file = empty_file
+          var strlines = count_lines(pf | ptr, bufsz)
+          val () = ret_file.lines := strlines
+        in
+          ret_file
+        end
+        | ~None_vt() => empty_file
     in
-      ret_file
+      ret
     end
