@@ -1,6 +1,6 @@
 #!/usr/bin/env cabal
 {- cabal:
-build-depends: base, shake, shake-ats
+build-depends: base, shake, shake-ats >= 1.10.2.3
 default-language: Haskell2010
 ghc-options: -Wall -threaded -rtsopts "-with-rtsopts=-I0 -qg -qb"
 -}
