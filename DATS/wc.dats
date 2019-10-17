@@ -1,7 +1,10 @@
 staload "SATS/wc.sats"
 staload "SATS/memchr.sats"
+staload "SATS/bytecount.sats"
 staload "prelude/SATS/pointer.sats"
 staload UN = "prelude/SATS/unsafe.sats"
+
+#include "DATS/bytecount.dats"
 
 %{
 size_t sub_ptr1_ptr1_size(atstype_ptr p1, atstype_ptr p2) {
@@ -13,11 +16,8 @@ extern
 fn sub_ptr1_ptr1_size { l0, l1 : addr | l0 >= l1 }(p1 : ptr(l0), p2 : ptr(l1)) :<> size_t(l0-l1) =
   "ext#"
 
-// bad (?) idea: use rawmemchr + append lol
-extern
-fn memchr { l : addr | l != null }{m:nat}{ n : nat | n <= m }(bytes_v(l,m) | ptr(l), int, size_t(n)) :
-  [ l0 : addr | l0 == null || l0 >= l && l0-l <= m ] (bytes_v(l, l0-l), bytes_v(l0, l+m-l0)| ptr(l0)) =
-  "mac#"
+fn bptr_succ {l:addr}(p : ptr(l)) :<> ptr(l+1) =
+  $UN.cast(ptr1_succ<byte>(p))
 
 fn freadc_ {l:addr}{ sz : nat | sz > 0 }{ n : nat | n <= sz }(pf : !bytes_v(l, sz)
                                                              | inp : !FILEptr1, bufsize : size_t(sz), p : ptr(l)) :
@@ -30,18 +30,6 @@ fn freadc_ {l:addr}{ sz : nat | sz > 0 }{ n : nat | n <= sz }(pf : !bytes_v(l, s
   in
     n
   end
-
-fn bptr_succ {l:addr}(p : ptr(l)) :<> ptr(l+1) =
-  $UN.cast(ptr1_succ<byte>(p))
-
-extern
-fn count_char { l : addr | l != null }{m:nat}(!bytes_v(l, m) | ptr(l), c : char, bufsz : size_t(m)) :
-  [ n : nat | n <= m ] int(n) =
-  "ext#"
-
-fn count_lines { l : addr | l != null }{m:nat}(pf : !bytes_v(l, m) | p : ptr(l), bufsz : size_t(m)) :
-  [ n : nat | n <= m ] int(n) =
-  count_char(pf | p, '\n', bufsz)
 
 implement empty_file =
   @{ lines = 0, blanks = 0, comments = 0, doc_comments = 0 } : file
