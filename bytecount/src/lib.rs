@@ -4,21 +4,30 @@ extern crate memchr;
 
 use libc::c_int;
 use libc::size_t;
-use std::slice;
 
-#[no_mangle]
-pub extern "C" fn memchr2(bytes: *const u8, b0: char, b1: char, bufsz: size_t) -> Option<size_t> {
-    unsafe {
-        let byte_slice = slice::from_raw_parts(bytes, bufsz);
-        memchr::memchr2(b0 as u8, b1 as u8, byte_slice).map(|x| x as size_t)
+use std::slice;
+use std::usize;
+
+fn cap(n: Option<size_t>) -> size_t {
+    match n {
+        Some(m) => m,
+        None => usize::MAX
     }
 }
 
 #[no_mangle]
-pub extern "C" fn memchr3(bytes: *const u8, b0: char, b1: char, b2: char, bufsz: size_t) -> Option<size_t> {
+pub extern "C" fn memchr2_rs(bytes: *const u8, b0: char, b1: char, bufsz: size_t) -> size_t {
     unsafe {
         let byte_slice = slice::from_raw_parts(bytes, bufsz);
-        memchr::memchr3(b0 as u8, b1 as u8, b2 as u8, byte_slice).map(|x| x as size_t)
+        cap(memchr::memchr2(b0 as u8, b1 as u8, byte_slice))
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn memchr3_rs(bytes: *const u8, b0: char, b1: char, b2: char, bufsz: size_t) -> size_t {
+    unsafe {
+        let byte_slice = slice::from_raw_parts(bytes, bufsz);
+        cap(memchr::memchr3(b0 as u8, b1 as u8, b2 as u8, byte_slice))
     }
 }
 

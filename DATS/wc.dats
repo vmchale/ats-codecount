@@ -5,6 +5,7 @@ staload "prelude/SATS/pointer.sats"
 staload UN = "prelude/SATS/unsafe.sats"
 
 #include "DATS/bytecount.dats"
+#include "DATS/memchr.dats"
 
 %{
 size_t sub_ptr1_ptr1_size(atstype_ptr p1, atstype_ptr p2) {
@@ -25,7 +26,7 @@ fn freadc_ {l:addr}{ sz : nat | sz > 0 }{ n : nat | n <= sz }(pf : !bytes_v(l, s
   let
     extern
     castfn as_fileref(x : !FILEptr1) :<> FILEref
-    
+
     var n = $extfcall(size_t(n), "fread", p, sizeof<byte>, bufsize - 1, as_fileref(inp))
   in
     n
@@ -83,16 +84,16 @@ implement count_buf (pf | ptr, bufsz, st) =
     | in_block_comment (_) => empty_file
     | line_comment () => empty_file
     | regular() => let
-      val next_char_offset = memchr3(pf | ptr, '\n', '"', '/', bufsz)
+      val next_char_offset = memchr3(pf | ptr, '\n', '"', '\\', bufsz)
       val ret = case+ next_char_offset of
         | ~Some_vt (char_ptr_off) => let
           var char_ptr = add_ptr_bsz(ptr, char_ptr_off)
           var char_val = $UN.ptr0_get<char>(char_ptr)
-          
+
           // result of a split points to a non-null view
           extern
           praxi ptr_splat {l0:addr}{m:nat} (!bytes_v(l0, m)) : [l0 != null] void
-          
+
           var ret_file = case- char_val of
             | '\n' => let
               var bytes_remaining = bufsz - char_ptr_off
@@ -103,6 +104,7 @@ implement count_buf (pf | ptr, bufsz, st) =
                   prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off + 1)
                   prval () = ptr_splat(pf1)
                   val () = ret_file := count_buf(pf1 | next_ptr, bytes_remaining - 1, st)
+                  val () = ret_file.lines := ret_file.lines + 1
                   prval () = pf := bytes_v_unsplit(pf0,pf1)
                 in end
               else
