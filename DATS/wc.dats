@@ -19,12 +19,12 @@ fn memchr { l : addr | l != null }{m:nat}{ n : nat | n <= m }(bytes_v(l,m) | ptr
 
 extern
 fn memchr2 { l : addr | l != null }{m:nat}{ n : nat | n <= m }(!bytes_v(l, m) | ptr(l), char, char, size_t(n)) :
-  Option_vt([ k : nat | k <= n ] uint(k)) =
+  Option_vt([ k : nat | k <= n ] size_t(k)) =
   "ext#"
 
 extern
 fn memchr3 { l : addr | l != null }{m:nat}{ n : nat | n <= m }(!bytes_v(l, m) | ptr(l), char, char, char, size_t(n)) :
-  Option_vt([ k : nat | k <= n ] uint(k)) =
+  Option_vt([ k : nat | k <= n ] size_t(k)) =
   "ext#"
 
 fn freadc_ {l:addr}{ sz : nat | sz > 0 }{ n : nat | n <= sz }(pf : !bytes_v(l, sz)
@@ -102,10 +102,30 @@ implement count_buf (pf | ptr, bufsz, st) =
     | regular() => let
       val next_char_offset = memchr3(pf | ptr, '\n', '"', '/', bufsz)
       val ret = case+ next_char_offset of
-        | ~Some_vt (char_ptr) => let
-          var ret_file: file = empty_file
-          var strlines = count_lines(pf | ptr, bufsz)
-          val () = ret_file.lines := strlines
+        | ~Some_vt (char_ptr_off) => let
+          var char_ptr = add_ptr_bsz(ptr, char_ptr_off)
+          var char_val = $UN.ptr0_get<char>(char_ptr)
+
+          // result of a split points to a non-null view
+          extern
+          praxi ptr_splat {l0:addr}{m:nat} (!bytes_v(l0, m)) : [l0 != null] void
+
+          var ret_file = case- char_val of
+            | '\n' => let
+              prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off)
+              prval () = ptr_splat(pf1)
+              var bytes_remaining = bufsz - char_ptr_off
+              var ret_file: file
+              val () = if bytes_remaining > 0 then
+                // should be char_ptr + 1
+                ret_file := count_buf(pf1 | char_ptr, bytes_remaining, st)
+              else
+                ret_file := empty_file
+              prval () = pf := bytes_v_unsplit(pf0,pf1)
+            in
+              ret_file
+            end
+            | _ => empty_file
         in
           ret_file
         end
