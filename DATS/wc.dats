@@ -79,11 +79,13 @@ implement count_buf (pf | ptr, bufsz, st) =
     | in_block_comment (_) => empty_file
     | line_comment () => empty_file
     | regular() => let
-      val next_char_offset = memchr3(pf | ptr, '\n', '"', '\\', bufsz)
+      val next_char_offset = memchr3(pf | ptr, '\n', '"', '/', bufsz)
       val ret = case+ next_char_offset of
         | ~Some_vt (char_ptr_off) => let
           var char_ptr = add_ptr_bsz(ptr, char_ptr_off)
           var char_val = $UN.ptr0_get<char>(char_ptr)
+          var bytes_remaining = bufsz - char_ptr_off
+          val next_ptr = bptr_succ(char_ptr)
 
           // result of a split points to a non-null view
           extern
@@ -91,11 +93,9 @@ implement count_buf (pf | ptr, bufsz, st) =
 
           var ret_file = case- char_val of
             | '\n' => let
-              var bytes_remaining = bufsz - char_ptr_off
               var ret_file: file
               val () = if bytes_remaining > 0 then
                 let
-                  val next_ptr = bptr_succ(char_ptr)
                   prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off + 1)
                   prval () = ptr_splat(pf1)
                   val () = ret_file := count_buf(pf1 | next_ptr, bytes_remaining - 1, st)
@@ -107,8 +107,34 @@ implement count_buf (pf | ptr, bufsz, st) =
             in
               ret_file
             end
-            | '\\' => empty_file
-            | '"' => empty_file
+            | '/' => let
+              var ret_file: file
+              val () = if bytes_remaining > 0 then
+                let
+                  prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off + 1)
+                  prval () = ptr_splat(pf1)
+                  val () = ret_file := count_buf(pf1 | next_ptr, bytes_remaining - 1, st)
+                  prval () = pf := bytes_v_unsplit(pf0,pf1)
+                in end
+              else
+                ret_file := empty_file
+            in
+              ret_file
+            end
+            | '"' => let
+              var ret_file: file
+              val () = if bytes_remaining > 0 then
+                let
+                  prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off + 1)
+                  prval () = ptr_splat(pf1)
+                  val () = ret_file := count_buf(pf1 | next_ptr, bytes_remaining - 1, st)
+                  prval () = pf := bytes_v_unsplit(pf0,pf1)
+                in end
+              else
+                ret_file := empty_file
+            in
+              ret_file
+            end
         in
           ret_file
         end
