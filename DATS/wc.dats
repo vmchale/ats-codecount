@@ -60,12 +60,7 @@ implement count_buf (pf | ptr, bufsz, st) =
         let
           //TODO: check that p2's predecessor is not a backslash
           var pred_is_slash = if p2 > ptr then
-            let
-              val () = print(p2)
-            in
-              // 92 -> \
-              ptr1_pred<byte>(p2) = $UN.cast(92)
-            end
+            ptr1_pred<byte>(p2) = $UN.cast(92)
           else
             false
           var bytes_taken = sub_ptr1_ptr1_size(p2, ptr)
@@ -112,6 +107,8 @@ implement count_buf (pf | ptr, bufsz, st) =
             in
               ret_file
             end
+            | '\\' => empty_file
+            | '"' => empty_file
         in
           ret_file
         end
