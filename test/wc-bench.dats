@@ -13,7 +13,7 @@ fun harness() : void =
       let
         extern
         castfn fp_is_null { l : addr | l == null }{m:fm} (FILEptr(l,m)) :<> void
-        
+
         val () = fp_is_null(inp)
         val () = println!("failed to open file")
       in end
