@@ -1,4 +1,6 @@
 staload "SATS/wc.sats"
+staload "SATS/memchr.sats"
+staload "prelude/SATS/pointer.sats"
 staload UN = "prelude/SATS/unsafe.sats"
 
 %{
@@ -17,27 +19,20 @@ fn memchr { l : addr | l != null }{m:nat}{ n : nat | n <= m }(bytes_v(l,m) | ptr
   [ l0 : addr | l0 == null || l0 >= l && l0-l <= m ] (bytes_v(l, l0-l), bytes_v(l0, l+m-l0)| ptr(l0)) =
   "mac#"
 
-extern
-fn memchr2 { l : addr | l != null }{m:nat}{ n : nat | n <= m }(!bytes_v(l, m) | ptr(l), char, char, size_t(n)) :
-  Option_vt([ k : nat | k <= n ] size_t(k)) =
-  "ext#"
-
-extern
-fn memchr3 { l : addr | l != null }{m:nat}{ n : nat | n <= m }(!bytes_v(l, m) | ptr(l), char, char, char, size_t(n)) :
-  Option_vt([ k : nat | k <= n ] size_t(k)) =
-  "ext#"
-
 fn freadc_ {l:addr}{ sz : nat | sz > 0 }{ n : nat | n <= sz }(pf : !bytes_v(l, sz)
                                                              | inp : !FILEptr1, bufsize : size_t(sz), p : ptr(l)) :
   size_t(n) =
   let
     extern
     castfn as_fileref(x : !FILEptr1) :<> FILEref
-
+    
     var n = $extfcall(size_t(n), "fread", p, sizeof<byte>, bufsize - 1, as_fileref(inp))
   in
     n
   end
+
+fn bptr_succ {l:addr}(p : ptr(l)) :<> ptr(l+1) =
+  $UN.cast(ptr1_succ<byte>(p))
 
 extern
 fn count_char { l : addr | l != null }{m:nat}(!bytes_v(l, m) | ptr(l), c : char, bufsz : size_t(m)) :
@@ -105,27 +100,28 @@ implement count_buf (pf | ptr, bufsz, st) =
         | ~Some_vt (char_ptr_off) => let
           var char_ptr = add_ptr_bsz(ptr, char_ptr_off)
           var char_val = $UN.ptr0_get<char>(char_ptr)
-
+          
           // result of a split points to a non-null view
           extern
           praxi ptr_splat {l0:addr}{m:nat} (!bytes_v(l0, m)) : [l0 != null] void
-
+          
           var ret_file = case- char_val of
             | '\n' => let
-              prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off)
-              prval () = ptr_splat(pf1)
               var bytes_remaining = bufsz - char_ptr_off
               var ret_file: file
               val () = if bytes_remaining > 0 then
-                // should be char_ptr + 1
-                ret_file := count_buf(pf1 | char_ptr, bytes_remaining, st)
+                let
+                  val next_ptr = bptr_succ(char_ptr)
+                  prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off + 1)
+                  prval () = ptr_splat(pf1)
+                  val () = ret_file := count_buf(pf1 | next_ptr, bytes_remaining - 1, st)
+                  prval () = pf := bytes_v_unsplit(pf0,pf1)
+                in end
               else
                 ret_file := empty_file
-              prval () = pf := bytes_v_unsplit(pf0,pf1)
             in
               ret_file
             end
-            | _ => empty_file
         in
           ret_file
         end
