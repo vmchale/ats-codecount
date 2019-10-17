@@ -45,9 +45,7 @@ fn harness() : void =
         val (pfat, pfgc | p) = malloc_gc(g1i2u(BUFSZ))
         prval () = pfat := b0ytes2bytes_v(pfat)
         val file_bytes = freadc_(pfat | inp, i2sz(BUFSZ), p)
-        var st: parse_state = regular()
-        val final_file = count_buf(pfat | p, file_bytes, st)
-        val () = free(st)
+        val newlines = count_lines_memchr(pfat | p, file_bytes)
         val () = mfree_gc(pfat, pfgc | p)
         val () = fclose1_exn(inp)
       in end

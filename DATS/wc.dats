@@ -42,103 +42,45 @@ implement free_st (st) =
     | ~line_comment() => ()
     | ~regular() => ()
 
-implement count_buf (pf | ptr, bufsz, st) =
-  case+ st of
-    | ~in_string (n) => let
-      // 34 -> "
-      val (pf0, pf1 | p2) = memchr(pf | ptr, 34, bufsz)
-    in
-      if ptr_is_null(p2) then
-        let
-          prval () = pf := bytes_v_unsplit(pf0,pf1)
-          var strlines = count_lines(pf | ptr, bufsz)
-          val () = st := in_string(n + strlines)
-        in
-          empty_file
-        end
-      else
-        let
-          //TODO: check that p2's predecessor is not a backslash
-          var pred_is_slash = if p2 > ptr then
-            ptr1_pred<byte>(p2) = $UN.cast(92)
-          else
-            false
-          var bytes_taken = sub_ptr1_ptr1_size(p2, ptr)
-          var strlines = count_lines(pf0 | ptr, bytes_taken)
-          var in_str = strlines + n
-          var bytes_remaining = bufsz - bytes_taken
-          val () = st := regular()
-          var ret_file: file
-          val () = ret_file := count_buf(pf1 | p2, bytes_remaining, st)
-          val () = ret_file.lines := ret_file.lines + strlines
-          prval () = pf := bytes_v_unsplit(pf0,pf1)
-        in
-          ret_file
-        end
-    end
-    | in_block_comment (_) => empty_file
-    | line_comment () => empty_file
-    | regular() => let
-      val next_char_offset = memchr3(pf | ptr, '\n', '"', '/', bufsz)
-      val ret = case+ next_char_offset of
-        | ~Some_vt (char_ptr_off) => let
-          var char_ptr = add_ptr_bsz(ptr, char_ptr_off)
-          var char_val = $UN.ptr0_get<char>(char_ptr)
-          var bytes_remaining = bufsz - char_ptr_off
-          val next_ptr = bptr_succ(char_ptr)
+implement count_lines_memchr (pf | ptr, bufsz) =
+  let
+    val (pf0, pf1 | next_ptr) = memchr(pf | ptr, 34, bufsz)
+  in
+    if ptr_is_null(next_ptr) then
+      let
+        prval () = pf := bytes_v_unsplit(pf0,pf1)
+      in
+        0
+      end
+    else
+      let
+        var bytes_taken = sub_ptr1_ptr1_size(next_ptr, ptr)
+        var bytes_remaining = bufsz - bytes_taken
+      in
+        if bytes_remaining > 0 then
+          let
+            extern
+            praxi splittable {l:addr}{m:nat}{n:nat} (!bytes_v(l, m) | size_t(n)) : [n <= m] void
 
-          // result of a split points to a non-null view
-          extern
-          praxi ptr_splat {l0:addr}{m:nat} (!bytes_v(l0, m)) : [l0 != null] void
+            extern
+            praxi eq_sz { l0, l1 : addr }{m:nat} (!bytes_v(l0, m) | ptr(l1)) : [l0 == l1] void
 
-          var ret_file = case- char_val of
-            | '\n' => let
-              var ret_file: file
-              val () = if bytes_remaining > 0 then
-                let
-                  prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off + 1)
-                  prval () = ptr_splat(pf1)
-                  val () = ret_file := count_buf(pf1 | next_ptr, bytes_remaining - 1, st)
-                  val () = ret_file.lines := ret_file.lines + 1
-                  prval () = pf := bytes_v_unsplit(pf0,pf1)
-                in end
-              else
-                ret_file := empty_file
-            in
-              ret_file
-            end
-            | '/' => let
-              var ret_file: file
-              val () = if bytes_remaining > 0 then
-                let
-                  prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off + 1)
-                  prval () = ptr_splat(pf1)
-                  val () = ret_file := count_buf(pf1 | next_ptr, bytes_remaining - 1, st)
-                  prval () = pf := bytes_v_unsplit(pf0,pf1)
-                in end
-              else
-                ret_file := empty_file
-            in
-              ret_file
-            end
-            | '"' => let
-              var ret_file: file
-              val () = if bytes_remaining > 0 then
-                let
-                  prval (pf0, pf1) = bytes_v_split_at(pf | char_ptr_off + 1)
-                  prval () = ptr_splat(pf1)
-                  val () = ret_file := count_buf(pf1 | next_ptr, bytes_remaining - 1, st)
-                  prval () = pf := bytes_v_unsplit(pf0,pf1)
-                in end
-              else
-                ret_file := empty_file
-            in
-              ret_file
-            end
-        in
-          ret_file
-        end
-        | ~None_vt() => empty_file
-    in
-      ret
-    end
+            var succ_ptr = bptr_succ(next_ptr)
+            var b_at = bytes_taken + 1
+            prval () = splittable(pf1 | b_at)
+            prval (pf2, pf3) = bytes_v_split_at(pf1 | b_at)
+            prval () = eq_sz(pf2 | succ_ptr)
+            var intermed = count_lines_memchr(pf2 | succ_ptr, bytes_remaining)
+            prval () = pf1 := bytes_v_unsplit(pf2,pf3)
+            prval () = pf := bytes_v_unsplit(pf0,pf1)
+          in
+            intermed + 1
+          end
+        else
+          let
+            prval () = pf := bytes_v_unsplit(pf0,pf1)
+          in
+            0
+          end
+      end
+  end
