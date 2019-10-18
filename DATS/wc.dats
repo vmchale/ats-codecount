@@ -42,6 +42,9 @@ implement free_st (st) =
     | ~line_comment() => ()
     | ~regular() => ()
 
+fn byteview_read {l0:addr}{m:nat}{ l1 : addr | l1 <= l0+m }(pf : !bytes_v(l0, m) | p : ptr(l1)) : char =
+  $UN.ptr0_get<char>(p)
+
 implement count_lines_naive {l:addr}{m:int} (pf | ptr, bufsz : size_t(m)) =
   let
     var res: int = 0
@@ -49,7 +52,7 @@ implement count_lines_naive {l:addr}{m:int} (pf | ptr, bufsz : size_t(m)) =
     val () = for* { i : nat | i <= m } .<i>. (i : size_t(i)) =>
         (i := bufsz ; i > 0 ; i := i - 1)
         (let
-          val current_char = $UN.ptr0_get<char>(add_ptr_bsz(ptr, i))
+          val current_char = byteview_read(pf | add_ptr_bsz(ptr, i))
         in
           case+ current_char of
             | '\n' => res := res + 1
