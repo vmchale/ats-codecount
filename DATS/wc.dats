@@ -45,7 +45,7 @@ implement free_st (st) =
 fn byteview_read {l0:addr}{m:nat}{ l1 : addr | l1 <= l0+m }(pf : !bytes_v(l0, m) | p : ptr(l1)) : char =
   $UN.ptr0_get<char>(p)
 
-implement count_lines_naive {l:addr}{m:int} (pf | ptr, bufsz : size_t(m)) =
+implement count_lines_for_loop {l:addr}{m:int} (pf | ptr, bufsz : size_t(m)) =
   let
     var res: int = 0
     var i: size_t
