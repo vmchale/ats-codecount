@@ -14,8 +14,7 @@ fn count_buf { l : addr | l != null }{m:nat} (!bytes_v(l, m) | ptr(l), bufsz : s
 fn count_lines_memchr { l : addr | l != null }{m:nat} (!bytes_v(l, m) | ptr(l), bufsz : size_t(m)) :
   [ k : nat | k <= m ] int(k)
 
-// Using a simple loop
-fn count_lines_naive { l : addr | l != null }{m:nat} (!bytes_v(l, m) | ptr(l), bufsz : size_t(m)) :
+fn count_lines_for_loop { l : addr | l != null }{m:nat} (!bytes_v(l, m) | ptr(l), bufsz : size_t(m)) :
   [ k : nat | k <= m ] int(k)
 
 fn free_st(parse_state) : void
