@@ -6,18 +6,16 @@ simply using a `for*` loop and GCC.
 ## Conclusions
 
 ```
-Benchmarking bytecount (sqlite3.c): Warming up for 3.0000 s
-bytecount (sqlite3.c)   time:   [1.1238 ms 1.1324 ms 1.1409 ms]
-                        change: [-1.1963% +0.1606% +1.4871%] (p = 0.81 > 0.05)
-                        No change in performance detected.
-Found 5 outliers among 100 measurements (5.00%)
-  2 (2.00%) high mild
-  3 (3.00%) high severe
+bytecount (sqlite3.c)   time:   [707.15 us 708.12 us 709.10 us]                                  
+Found 4 outliers among 100 measurements (4.00%)
+  3 (3.00%) high mild
+  1 (1.00%) high severe
 
 sqlite.c (for loop)
-    estimate: 1.057770 ms
+    estimate: 619.777896 μs
 sqlite.c (bytecount)
-    estimate: 1.145262 ms
+    estimate: 701.243583 μs
+Build completed in 1m08s
 ```
 
 As can be seen, bytecount achieves acceptable performance; these
