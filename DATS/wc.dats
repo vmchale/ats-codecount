@@ -42,6 +42,23 @@ implement free_st (st) =
     | ~line_comment() => ()
     | ~regular() => ()
 
+implement count_lines_naive {l:addr}{m:int} (pf | ptr, bufsz : size_t(m)) =
+  let
+    var res: int = 0
+    var i: size_t
+    val () = for* { i : nat | i <= m } .<i>. (i : size_t(i)) =>
+        (i := bufsz ; i > 0 ; i := i - 1)
+        (let
+          val current_char = $UN.ptr0_get<char>(add_ptr_bsz(ptr, i))
+        in
+          case+ current_char of
+            | '\n' => res := res + 1
+            | _ => ()
+        end)
+  in
+    $UN.cast(res)
+  end
+
 implement count_lines_memchr (pf | ptr, bufsz) =
   let
     val (pf0, pf1 | next_ptr) = memchr(pf | ptr, 34, bufsz)
@@ -70,11 +87,11 @@ implement count_lines_memchr (pf | ptr, bufsz) =
             prval () = splittable(pf1 | b_at)
             prval (pf2, pf3) = bytes_v_split_at(pf1 | b_at)
             prval () = eq_sz(pf2 | succ_ptr)
-            var intermed = count_lines_memchr(pf2 | succ_ptr, bytes_remaining)
+            var intermed = 1 + count_lines_memchr(pf2 | succ_ptr, bytes_remaining)
             prval () = pf1 := bytes_v_unsplit(pf2,pf3)
             prval () = pf := bytes_v_unsplit(pf0,pf1)
           in
-            intermed + 1
+            intermed
           end
         else
           let
