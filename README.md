@@ -20,3 +20,14 @@ sqlite.c (bytecount)
 
 As can be seen, bytecount achieves acceptable performance; these
 benchmarks were performed on x86\_64.
+
+## Building
+
+To replicate the benchmarks, you will need
+[ats-pkg](http://hackage.haskell.org/package/ats-pkg),
+[cabal-install](https://www.haskell.org/cabal/download.html),
+[GHC](https://www.haskell.org/ghcup/), and [cargo](https://rustup.rs/). Then:
+
+```
+./shake.hs bench
+```
