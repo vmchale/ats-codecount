@@ -21,3 +21,6 @@ version = "0.6"
 [[bench]]
 name = "bytecount_bench"
 harness = false
+
+[profile.release]
+lto = true

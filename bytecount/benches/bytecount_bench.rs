@@ -18,7 +18,7 @@ fn file_lines(fp: &str) -> usize {
             0 => break,
             res => {
                 let sub_buffer = &buffer[0..res];
-                let linecount = linecount + bytecount::count(&sub_buffer, b'\n');
+                linecount = linecount + bytecount::count(&sub_buffer, b'\n');
             }
         };
     }

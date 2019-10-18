@@ -29,4 +29,5 @@ main = shakeArgs shakeOptions { shakeFiles = ".shake", shakeLint = Just LintBasi
 
     "bench" ~> do
         need ["target/wc-bench"]
+        unit $ command [Cwd "bytecount", AddEnv "RUSTFLAGS" "-C target-cpu=native"] "cargo" ["bench"]
         command [AddEnv "LD_LIBRARY_PATH" "./bytecount/target/release"] "./target/wc-bench" []
