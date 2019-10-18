@@ -7,8 +7,6 @@ simply using a `for*` loop and GCC.
 
 ```
 bytecount (sqlite3.c)   time:   [702.49 us 705.48 us 708.89 us]
-                        change: [-1.3521% -1.0614% -0.7512%] (p = 0.00 < 0.05)
-                        Change within noise threshold.
 Found 10 outliers among 100 measurements (10.00%)
   1 (1.00%) low mild
   6 (6.00%) high mild
