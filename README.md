@@ -31,3 +31,8 @@ To replicate the benchmarks, you will need
 ```
 ./shake.hs bench
 ```
+
+Results will likely be variable based on the CPU; exotic architectures may see
+completely different results.
+
+I used `rustc` 1.38.0 and GCC 9.2.0.
