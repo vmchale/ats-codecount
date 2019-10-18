@@ -27,7 +27,7 @@ fn freadc_ {l:addr}{ sz : nat | sz > 0 }{ n : nat | n <= sz }(pf : !bytes_v(l, s
     extern
     castfn as_fileref(x : !FILEptr1) :<> FILEref
 
-    var n = $extfcall(size_t(n), "fread", p, sizeof<byte>, bufsize - 1, as_fileref(inp))
+    var n = $extfcall(size_t(n), "fread", p, sizeof<byte>, bufsize, as_fileref(inp))
   in
     n
   end
@@ -50,7 +50,7 @@ implement count_lines_naive {l:addr}{m:int} (pf | ptr, bufsz : size_t(m)) =
     var res: int = 0
     var i: size_t
     val () = for* { i : nat | i <= m } .<i>. (i : size_t(i)) =>
-        (i := bufsz ; i > 0 ; i := i - 1)
+        (i := bufsz ; i != 0 ; i := i - 1)
         (let
           val current_char = byteview_read(pf | add_ptr_bsz(ptr, i))
         in

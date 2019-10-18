@@ -40,9 +40,15 @@ fn harness_memchr() : void =
     else
       let
         val (pfat, pfgc | p) = malloc_gc(g1i2u(BUFSZ))
+        var ret: int = 0
+        var fb: int = 1
+
+        (* val () = while(fb > 0){ *)
         prval () = pfat := b0ytes2bytes_v(pfat)
         val file_bytes = freadc_(pfat | inp, i2sz(BUFSZ), p)
         val newlines = count_lines_memchr(pfat | p, file_bytes)
+        val () = fb := sz2i(file_bytes)
+        val () = ret := ret + newlines
         val () = mfree_gc(pfat, pfgc | p)
         val () = fclose1_exn(inp)
       in end
@@ -73,7 +79,7 @@ val harness_naive_delay: io = lam () => harness_naive()
 
 implement main0 () =
   {
-    val () = print_slope("sqlite.c (memchr)", 7, harness_memchr_delay)
-    val () = print_slope("sqlite.c (naive)", 7, harness_naive_delay)
-    val () = print_slope("sqlite.c (bytecount)", 8, harness_bytecount_delay)
+    val () = print_slope("sqlite.c (memchr)", 9, harness_memchr_delay)
+    val () = print_slope("sqlite.c (naive)", 9, harness_naive_delay)
+    val () = print_slope("sqlite.c (bytecount)", 9, harness_bytecount_delay)
   }

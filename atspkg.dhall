@@ -9,5 +9,5 @@ in prelude.default ⫽
       }
     ]
   , dependencies = prelude.mapPlainDeps [ "ats-bench" ]
-  , cflags = [ "-lbytecount_ffi", "-L./bytecount/target/release" ]
+  , cflags = [ "-lbytecount_ffi", "-L./bytecount/target/release", "-O2", "-flto" ]
   }

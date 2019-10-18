@@ -21,7 +21,7 @@ main = shakeArgs shakeOptions { shakeFiles = ".shake", shakeLint = Just LintBasi
 
     "bytecount/target/release/libbytecount_ffi.so" %> \_ ->
         need ["bytecount/src/lib.rs", "bytecount/Cargo.toml"] *>
-        command [Cwd "bytecount"] "cargo" ["build", "--release"]
+        command [Cwd "bytecount", AddEnv "RUSTFLAGS" "-C target-cpu=native"] "cargo" ["build", "--release"]
 
     "target/wc-bench" %> \out -> do
         need ["bytecount/target/release/libbytecount_ffi.so", "atspkg.dhall", "test/wc-bench.dats", "SATS/wc.sats", "DATS/wc.dats"]

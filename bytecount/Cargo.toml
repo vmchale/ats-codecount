@@ -8,10 +8,9 @@ name = "bytecount_ffi"
 crate-type = [ "staticlib", "cdylib" ]
 
 [dependencies]
-bytecount = "0.6"
 libc = "0.2"
 memchr = "2.2"
 
-[features]
-runtime-dispatch-simd = ["bytecount/runtime-dispatch-simd"]
-generic-simd = ["bytecount/generic-simd"]
+[dependencies.bytecount]
+features = ["runtime-dispatch-simd"]
+version = "0.6"
