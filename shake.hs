@@ -20,7 +20,7 @@ main = shakeArgs shakeOptions { shakeFiles = ".shake", shakeLint = Just LintBasi
         removeFilesAfter ".shake" ["//*"]
 
     "bytecount/target/release/libbytecount_ffi.so" %> \_ ->
-        need ["bytecount/src/lib.rs", "bytecount/Cargo.toml"] *>
+        need ["bytecount/src/lib.rs", "bytecount/Cargo.toml", "bytecount/Cargo.lock"] *>
         command [Cwd "bytecount", AddEnv "RUSTFLAGS" "-C target-cpu=native"] "cargo" ["build", "--release"]
 
     "target/wc-bench" %> \out -> do
