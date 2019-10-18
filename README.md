@@ -1,4 +1,4 @@
 # ats-wc
 
-The hope is that this provides fast counting of lines of code by binding to the
-[bytecount](https://docs.rs/bytecount/) library.
+Benchmark of the [bytecount](https://docs.rs/bytecount/) library compared to
+simply using a `for*` loop and GCC.
