@@ -7,6 +7,9 @@ authors = ["Vanessa McHale <vamchale@gmail.com>"]
 name = "bytecount_ffi"
 crate-type = [ "staticlib", "cdylib" ]
 
+[dev-dependencies]
+criterion = "0.3"
+
 [dependencies]
 libc = "0.2"
 memchr = "2.2"
@@ -14,3 +17,7 @@ memchr = "2.2"
 [dependencies.bytecount]
 features = ["runtime-dispatch-simd"]
 version = "0.6"
+
+[[bench]]
+name = "bytecount_bench"
+harness = false
