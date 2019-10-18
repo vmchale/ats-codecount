@@ -75,6 +75,6 @@ val harness_naive_delay: io = lam () => harness_naive()
 
 implement main0 () =
   {
-    val () = print_slope("sqlite.c (for loop)", 6, harness_naive_delay)
-    val () = print_slope("sqlite.c (bytecount)", 6, harness_bytecount_delay)
+    val () = print_slope("sqlite.c (for loop)", 7, harness_naive_delay)
+    val () = print_slope("sqlite.c (bytecount)", 7, harness_bytecount_delay)
   }
