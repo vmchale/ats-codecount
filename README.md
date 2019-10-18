@@ -20,5 +20,5 @@ sqlite.c (bytecount)
     estimate: 1.145262 ms
 ```
 
-As can be seen, bytecount achieves acceptable (though not particularly
-impressive) performance; these benchmarks were performed on x86\_64.
+As can be seen, bytecount achieves acceptable performance; these
+benchmarks were performed on x86\_64.
