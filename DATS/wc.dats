@@ -64,7 +64,7 @@ fn count_lines_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }(pf :
     val () = for* { i : nat | i <= m } .<i>. (i : size_t(i)) =>
         (i := bufsz ; i != 0 ; i := i - 1)
         (let
-          val current_char = byteview_read_as_char(pf | add_ptr_bsz(ptr, i))
+          var current_char = byteview_read_as_char(pf | add_ptr_bsz(ptr, i))
         in
           case+ current_char of
             | '\n' => res := res + 1
@@ -90,7 +90,7 @@ fn count_file_for_loop(inp : !FILEptr1) : int =
           0
         else
           let
-            val fb_prf = bounded(file_bytes)
+            var fb_prf = bounded(file_bytes)
             prval () = lt_bufsz(fb_prf)
             var acc = count_lines_for_loop(pf | p, fb_prf)
           in
@@ -98,7 +98,7 @@ fn count_file_for_loop(inp : !FILEptr1) : int =
           end
       end
 
-    val ret = loop(pfat | inp, p)
+    var ret = loop(pfat | inp, p)
     val () = mfree_gc(pfat, pfgc | p)
   in
     ret
