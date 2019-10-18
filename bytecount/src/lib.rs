@@ -11,7 +11,7 @@ use std::usize;
 fn cap(n: Option<size_t>) -> size_t {
     match n {
         Some(m) => m,
-        None => usize::MAX
+        None => usize::MAX,
     }
 }
 
