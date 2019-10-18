@@ -69,6 +69,10 @@ fn count_lines_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }(pf :
             | '\n' => res := res + 1
             | _ => ()
         end)
+    var current_char = byteview_read_as_char(pf | ptr)
+    val () = case+ current_char of
+      | '\n' => res := res + 1
+      | _ => ()
   in
     res
   end
