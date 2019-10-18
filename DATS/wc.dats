@@ -56,8 +56,7 @@ fn byteview_read_as_char {l0:addr}{m:nat}{ l1 : addr | l1 <= l0+m }(pf : !bytes_
   $UN.ptr0_get<char>(p)
 
 fn count_lines_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }(pf : !bytes_v(l, m)
-                                                                           | ptr : ptr(l), bufsz : size_t(n)) :
-  [ k : nat | k <= m ] int(k) =
+                                                                           | ptr : ptr(l), bufsz : size_t(n)) : int =
   let
     var res: int = 0
     var i: size_t
@@ -71,7 +70,7 @@ fn count_lines_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }(pf :
             | _ => ()
         end)
   in
-    $UN.cast(res)
+    res
   end
 
 fn count_file_for_loop(inp : !FILEptr1) : int =
