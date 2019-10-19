@@ -167,8 +167,8 @@ fn count_lines_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }(pf :
   let
     var res: int = 0
     var i: size_t
-    val () = for* { i : nat | i <= n } .<n-i>. (i : size_t(i)) =>
-        (i := i2sz(0) ; i < bufsz ; i := i + 1)
+    val () = for* { i : nat | i <= n } .<i>. (i : size_t(i)) =>
+        (i := bufsz ; i != 0 ; i := i - 1)
         (let
           var current_char = byteview_read_as_char(pf | add_ptr_bsz(ptr, i))
         in
@@ -176,6 +176,10 @@ fn count_lines_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }(pf :
             | '\n' => res := res + 1
             | _ => ()
         end)
+    var current_char = byteview_read_as_char(pf | ptr)
+    val () = case+ current_char of
+      | '\n' => res := res + 1
+      | _ => ()
   in
     res
   end
