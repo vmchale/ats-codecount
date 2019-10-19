@@ -1,9 +1,6 @@
 staload "SATS/wc.sats"
-staload "SATS/memchr.sats"
 staload "prelude/SATS/pointer.sats"
 staload UN = "prelude/SATS/unsafe.sats"
-
-#include "DATS/memchr.dats"
 
 #define BUFSZ 32768
 
@@ -111,11 +108,11 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
               | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
               | _ => ()
           end
-        | post_backslash_in_string() =>
+        | ~post_backslash_in_string() =>
           begin
             case+ c of
-              | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_string)
-              | _ => ()
+              | '\n' => (file_st.lines := file_st.lines + 1 ; st := in_string)
+              | _ => (st := in_string)
           end
         | ~post_slash() =>
           begin
