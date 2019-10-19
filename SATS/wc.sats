@@ -12,13 +12,15 @@ datavtype parse_state =
   | post_block_comment
   | post_tick
 
+fn parse_state_tostring(st : &parse_state >> _) : string
+
 val empty_file: file
 
 fn count_buf { l : addr | l != null }{m:nat} (!bytes_v(l, m) | ptr(l), bufsz : size_t(m), &parse_state >> _) : file
 
 fn add_file(file, file) : file
 
-fn file_to_string(file) : string
+fn file_tostring(file) : string
 
 fn free_st(parse_state) : void
 
