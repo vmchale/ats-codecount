@@ -147,7 +147,12 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
               | '\'' => (free(st) ; st := post_tick)
               | _ => (free(st) ; st := regular)
           end
-        | ~post_tick() => st := regular
+        | ~post_tick() =>
+          begin
+            case+ c of
+              | '\n' => (file_st.lines := file_st.lines + 1 ; st := regular)
+              | _ => st := regular
+          end
 
     var res: file = empty_file
     var i: size_t
