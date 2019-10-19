@@ -120,6 +120,8 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
               | '/' => st := line_comment
               | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
               | '*' => st := in_block_comment
+              | '\'' => st := post_tick
+              | '"' => st := in_string
               | _ => st := regular
           end
         | post_newline_whitespace() =>
@@ -138,23 +140,24 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
             // TODO: block comments at the end of a line
             case+ c of
               | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
+              | ' ' => ()
+              | '\t' => ()
               | '/' => (free(st) ; st := post_slash)
               | '"' => (free(st) ; st := in_string)
-              | _ => ()
+              | '\'' => (free(st) ; st := post_tick)
+              | _ => (free(st) ; st := regular)
           end
         | ~post_tick() => st := regular
 
     var res: file = empty_file
     var i: size_t
-    val () = for* { i : nat | i <= m } .<i>. (i : size_t(i)) =>
-        (i := bufsz ; i != 0 ; i := i - 1)
+    val () = for* { i : nat | i <= n } .<n-i>. (i : size_t(i)) =>
+        (i := i2sz(0) ; i < bufsz ; i := i + 1)
         (let
           var current_char = byteview_read_as_char(pf | add_ptr_bsz(p, i))
         in
           advance_char(current_char, parse_st, res)
         end)
-    var current_char = byteview_read_as_char(pf | p)
-    val () = advance_char(current_char, parse_st, res)
   in
     res
   end
