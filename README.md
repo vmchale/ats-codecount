@@ -27,6 +27,7 @@ and [cargo](https://rustup.rs/). Then:
 
 ```
 atspkg test test/wc-bench
+cd bytecount && RUSTFLAGS='-C target-cpu=native' cargo bench
 ```
 
 Results will vary based on the CPU; exotic architectures may see
