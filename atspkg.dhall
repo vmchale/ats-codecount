@@ -7,6 +7,10 @@ in prelude.default ⫽
       , target = "${prelude.atsProject}/wc-bench"
       , gcBin = True
       }
+    , prelude.bin ⫽
+      { src = "test/wc-demo.dats"
+      , target = "${prelude.atsProject}/wc-demo"
+      }
     ]
   , dependencies = prelude.mapPlainDeps [ "ats-bench" ]
   , cflags = [ "-lbytecount_ffi", "-L./bytecount/target/release", "-O2", "-flto" ]

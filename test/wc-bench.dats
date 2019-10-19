@@ -70,11 +70,28 @@ fn harness_naive() : void =
       in end
   in end
 
+fn harness_filecount() : void =
+  let
+    var inp = fopen("test/data/sqlite3.c", file_mode_r)
+    val () = if FILEptr_is_null(inp) then
+      let
+        val () = fp_is_null(inp)
+        val () = println!("failed to open file")
+      in end
+    else
+      let
+        var newlines = count_file(inp)
+        val () = fclose1_exn(inp)
+      in end
+  in end
+
 val harness_bytecount_delay: io = lam () => harness_bytecount()
 val harness_naive_delay: io = lam () => harness_naive()
+val harness_filecount_delay: io = lam () => harness_filecount()
 
 implement main0 () =
   {
     val () = print_slope("sqlite.c (for loop)", 7, harness_naive_delay)
     val () = print_slope("sqlite.c (bytecount)", 7, harness_bytecount_delay)
+    val () = print_slope("sqlite.c (filecount)", 5, harness_filecount_delay)
   }
