@@ -13,7 +13,7 @@ main = shakeArgs shakeOptions { shakeFiles = ".shake", shakeLint = Just LintBasi
     want [ "target/wc-bench", "target/wc-demo" ]
 
     "clean" ~> do
-        unit $ cmd $ [ "rm", "-rf", "tags", "bytecount/rusty-tags.vi" ]
+        unit $ cmd [ "rm", "-rf", "tags", "bytecount/rusty-tags.vi" ]
         cleanATS
         removeFilesAfter "target" ["//*"]
         removeFilesAfter "bytecount/target" ["//*"]
@@ -30,4 +30,4 @@ main = shakeArgs shakeOptions { shakeFiles = ".shake", shakeLint = Just LintBasi
     "bench" ~> do
         need ["target/wc-bench"]
         unit $ command [Cwd "bytecount", AddEnv "RUSTFLAGS" "-C target-cpu=native"] "cargo" ["bench"]
-        command [AddEnv "LD_LIBRARY_PATH" "./bytecount/target/release"] "./target/wc-bench" []
+        command [] "./target/wc-bench" []

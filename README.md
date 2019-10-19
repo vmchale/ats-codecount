@@ -14,8 +14,6 @@ Found 10 outliers among 100 measurements (10.00%)
 
 sqlite.c (for loop)
     estimate: 622.847476 μs
-sqlite.c (bytecount)
-    estimate: 701.477035 μs
 ```
 
 As can be seen, bytecount achieves acceptable performance; these
@@ -25,11 +23,10 @@ benchmarks were performed on x86\_64.
 
 To replicate the benchmarks, you will need
 [ats-pkg](http://hackage.haskell.org/package/ats-pkg),
-[cabal-install](https://www.haskell.org/cabal/download.html),
-[GHC](https://www.haskell.org/ghc/download.html), and [cargo](https://rustup.rs/). Then:
+and [cargo](https://rustup.rs/). Then:
 
 ```
-./shake.hs bench
+atspkg test test/wc-bench
 ```
 
 Results will vary based on the CPU; exotic architectures may see
