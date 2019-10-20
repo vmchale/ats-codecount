@@ -1,4 +1,4 @@
-datavtype parse_state =
+datavtype parse_state_c =
   | in_string
   | in_block_comment
   | post_slash
@@ -14,8 +14,8 @@ datavtype parse_state =
   | post_tick
   | in_block_comment_first_line
 
-fn parse_state_tostring(st : &parse_state >> _) : string
+fn parse_state_c_tostring(st : &parse_state_c >> _) : string
 
-fn free_st(parse_state) : void
+fn free_st_c(parse_state_c) : void
 
-overload free with free_st
+overload free with free_st_c

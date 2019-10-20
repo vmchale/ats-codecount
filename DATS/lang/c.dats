@@ -7,7 +7,7 @@ staload "SATS/size.sats"
 
 #define BUFSZ 32768
 
-implement free_st (st) =
+implement free_st_c (st) =
   case+ st of
     | ~in_string () => ()
     | ~in_block_comment () => ()
@@ -24,13 +24,13 @@ implement free_st (st) =
     | ~in_block_comment_first_line() => ()
     | ~post_asterisk_in_block_comment_first_line() => ()
 
-fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !bytes_v(l, m) | p : ptr(l)
-                                                                     , parse_st : &parse_state >> _
-                                                                     , bufsz : size_t(n)
-                                                                     ) : file =
+fn count_c_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !bytes_v(l, m) | p : ptr(l)
+                                                                       , parse_st : &parse_state_c >> _
+                                                                       , bufsz : size_t(n)
+                                                                       ) : file =
   let
     // TODO: generate or at least validate these functions
-    fn advance_char(c : char, st : &parse_state >> _, file_st : &file >> _) : void =
+    fn advance_char(c : char, st : &parse_state_c >> _, file_st : &file >> _) : void =
       case+ st of
         | regular() =>
           begin
@@ -159,13 +159,13 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
     res
   end
 
-fn count_file(inp : !FILEptr1) : file =
+fn count_file_c(inp : !FILEptr1) : file =
   let
     val (pfat, pfgc | p) = malloc_gc(g1i2u(BUFSZ))
     prval () = pfat := b0ytes2bytes_v(pfat)
-    var init_st: parse_state = post_newline_whitespace
+    var init_st: parse_state_c = post_newline_whitespace
 
-    fun loop { l : addr | l != null }(pf : !bytes_v(l, BUFSZ) | inp : !FILEptr1, st : &parse_state >> _, p : ptr(l)) :
+    fun loop { l : addr | l != null }(pf : !bytes_v(l, BUFSZ) | inp : !FILEptr1, st : &parse_state_c >> _, p : ptr(l)) :
       file =
       let
         var file_bytes = freadc(pf | inp, i2sz(BUFSZ), p)
@@ -179,7 +179,7 @@ fn count_file(inp : !FILEptr1) : file =
           let
             var fb_prf = bounded(file_bytes)
             prval () = lt_bufsz(fb_prf)
-            var acc = count_for_loop(pf | p, st, fb_prf)
+            var acc = count_c_for_loop(pf | p, st, fb_prf)
           in
             acc + loop(pf | inp, st, p)
           end
@@ -192,7 +192,7 @@ fn count_file(inp : !FILEptr1) : file =
     ret
   end
 
-implement parse_state_tostring (st) =
+implement parse_state_c_tostring (st) =
   case+ st of
     | regular() => "regular"
     | in_block_comment() => "in_block_comment"

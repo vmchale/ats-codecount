@@ -23,7 +23,7 @@ fn filecount(fp : string) : void =
       in end
     else
       let
-        var newlines = count_file(inp)
+        var newlines = count_file_c(inp)
         val () = println!(file_tostring(newlines))
         val () = fclose1_exn(inp)
       in end
