@@ -6,7 +6,7 @@ staload UN = "prelude/SATS/unsafe.sats"
 
 %{
 size_t sub_ptr1_ptr1_size(atstype_ptr p1, atstype_ptr p2) {
-  return ((char *)p1 - (char *)p2);
+    return ((char *)p1 - (char *)p2);
 }
 %}
 
