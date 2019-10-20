@@ -32,4 +32,4 @@ implement main0 (argc, argv) =
   if argc > 1 then
     filecount(argv[1])
   else
-    println!("No file provided")
+    (println!("No file provided") ; exit(1))
