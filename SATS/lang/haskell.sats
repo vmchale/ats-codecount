@@ -16,7 +16,8 @@ datavtype parse_state =
   | post_hyphen
   | post_hyphen_regular
 
-(* fn parse_state_tostring(st : &parse_state >> _) : string *)
+fn parse_state_tostring(st : &parse_state >> _) : string
+
 fn free_st(parse_state) : void
 
 overload free with free_st
