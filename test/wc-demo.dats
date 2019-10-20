@@ -9,9 +9,9 @@ staload "libats/libc/SATS/stdio.sats"
 
 #define BUFSZ 32768
 
-fn filecount() : void =
+fn filecount(fp : string) : void =
   let
-    var inp = fopen("test/data/sqlite3.c", file_mode_r)
+    var inp = fopen(fp, file_mode_r)
     val () = if FILEptr_is_null(inp) then
       let
         extern
@@ -29,4 +29,4 @@ fn filecount() : void =
   in end
 
 implement main0 (argc, argv) =
-  filecount()
+  filecount("test/data/sqlite3.c")
