@@ -1,4 +1,4 @@
-staload "SATS/wc.sats"
+staload "SATS/file.sats"
 staload "SATS/lang/c.sats"
 staload "SATS/pointer.sats"
 staload "SATS/size.sats"

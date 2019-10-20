@@ -1,11 +1,10 @@
-staload "SATS/wc.sats"
 staload "libats/libc/SATS/stdio.sats"
 
 #include "share/atspre_staload.hats"
 #include "share/HATS/atslib_staload_libats_libc.hats"
 #include "share/HATS/atspre_staload_libats_ML.hats"
+#include "DATS/file.dats"
 #include "DATS/print.dats"
-#include "DATS/wc.dats"
 #include "DATS/lang/c.dats"
 #include "DATS/pointer.dats"
 

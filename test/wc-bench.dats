@@ -1,4 +1,3 @@
-staload "SATS/wc.sats"
 staload "libats/libc/SATS/stdio.sats"
 
 #include "$PATSHOMELOCS/ats-bench-0.3.3/bench.dats"

@@ -1,25 +1,12 @@
-staload "SATS/wc.sats"
 staload "prelude/SATS/pointer.sats"
 staload UN = "prelude/SATS/unsafe.sats"
 staload "SATS/pointer.sats"
 staload "SATS/size.sats"
 
+#include "DATS/file.dats"
 #include "DATS/io.dats"
 
 #define BUFSZ 32768
-
-implement file_eq (f0, f1) =
-  f0.lines = f1.lines && f0.blanks = f1.blanks && f0.comments = f1.comments && f0.doc_comments = f1.doc_comments
-
-implement empty_file =
-  @{ lines = 0, blanks = 0, comments = 0, doc_comments = 0 } : file
-
-implement add_file (f0, f1) =
-  @{ lines = f0.lines + f1.lines
-   , blanks = f0.blanks + f1.blanks
-   , comments = f0.comments + f1.comments
-   , doc_comments = f0.doc_comments + f1.doc_comments
-   } : file
 
 fn count_lines_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }(pf : !bytes_v(l, m)
                                                                            | ptr : ptr(l), bufsz : size_t(n)) : int =

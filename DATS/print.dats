@@ -1,5 +1,5 @@
 staload "libats/ML/SATS/string.sats"
-staload "SATS/wc.sats"
+staload "SATS/file.sats"
 
 implement file_tostring (f) =
   "Lines: "
