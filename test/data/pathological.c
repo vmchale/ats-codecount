@@ -15,3 +15,13 @@ int always_return_zero(void) { /* begin comment
 
     0
 }
+
+void silly_switch(char c) {
+    switch (c) {
+    case '"':
+        break;
+    // Comment
+    default:
+        break;
+    }
+}
