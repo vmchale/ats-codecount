@@ -54,6 +54,9 @@ implement free_st (st) =
     | ~in_block_comment_first_line() => ()
     | ~post_asterisk_in_block_comment_first_line() => ()
 
+implement file_eq (f0, f1) =
+  f0.lines = f1.lines && f0.blanks = f1.blanks && f0.comments = f1.comments && f0.doc_comments = f1.doc_comments
+
 implement empty_file =
   @{ lines = 0, blanks = 0, comments = 0, doc_comments = 0 } : file
 
@@ -72,6 +75,7 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
                                                                      , bufsz : size_t(n)
                                                                      ) : file =
   let
+    // TODO: generate or at least validate these functions
     fn advance_char(c : char, st : &parse_state >> _, file_st : &file >> _) : void =
       case+ st of
         | regular() =>

@@ -20,6 +20,8 @@ fn parse_state_tostring(st : &parse_state >> _) : string
 
 val empty_file: file
 
+fn file_eq(file, file) : bool
+
 fn count_buf { l : addr | l != null }{m:nat} (!bytes_v(l, m) | ptr(l), bufsz : size_t(m), &parse_state >> _) : file
 
 fn add_file(file, file) : file
@@ -30,3 +32,4 @@ fn free_st(parse_state) : void
 
 overload free with free_st
 overload + with add_file
+overload = with file_eq
