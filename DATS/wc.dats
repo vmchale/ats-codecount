@@ -31,12 +31,6 @@ fn freadc { l : addr | l != null }{ sz : nat | sz >= 1 }(pf : !bytes_v(l, sz)
     n
   end
 
-fn freadc_ { l : addr | l != null }{ sz : nat | sz >= 1 }{ n : nat | n <= sz }( pf : !bytes_v(l, sz) | inp : !FILEptr1
-                                                                              , bufsize : size_t(sz)
-                                                                              , p : ptr(l)
-                                                                              ) : size_t(n) =
-  $UN.cast(freadc(pf | inp, bufsize, p))
-
 implement free_st (st) =
   case+ st of
     | ~in_string () => ()
