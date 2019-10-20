@@ -15,6 +15,7 @@ int always_return_zero(void) { /* begin comment
                                   second bit of comment
                                   */
 
+
     return 0;
 }
 
