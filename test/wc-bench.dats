@@ -4,6 +4,8 @@ staload "libats/libc/SATS/stdio.sats"
 #include "$PATSHOMELOCS/ats-bench-0.3.3/bench.dats"
 #include "share/atspre_staload.hats"
 #include "DATS/wc.dats"
+#include "DATS/lang/c.dats"
+#include "DATS/pointer.dats"
 
 #define BUFSZ 32768
 

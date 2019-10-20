@@ -1,9 +1,10 @@
 staload "SATS/wc.sats"
 staload "prelude/SATS/pointer.sats"
 staload UN = "prelude/SATS/unsafe.sats"
-staload "SATS/io.sats"
 staload "SATS/pointer.sats"
 staload "SATS/size.sats"
+
+#include "DATS/io.dats"
 
 #define BUFSZ 32768
 
