@@ -29,4 +29,7 @@ fn filecount(fp : string) : void =
   in end
 
 implement main0 (argc, argv) =
-  filecount("test/data/sqlite3.c")
+  {
+    val () = filecount("test/data/sqlite3.c")
+    val () = filecount("test/data/pathological.c")
+  }
