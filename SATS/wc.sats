@@ -22,8 +22,6 @@ val empty_file: file
 
 fn file_eq(file, file) : bool
 
-fn count_buf { l : addr | l != null }{m:nat} (!bytes_v(l, m) | ptr(l), bufsz : size_t(m), &parse_state >> _) : file
-
 fn add_file(file, file) : file
 
 fn file_tostring(file) : string
