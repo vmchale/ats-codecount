@@ -42,13 +42,17 @@ implement free_st (st) =
     | ~in_string () => ()
     | ~in_block_comment () => ()
     | ~line_comment() => ()
+    | ~line_comment_end() => ()
     | ~post_asterisk_in_block_comment() => ()
     | ~post_backslash_in_string() => ()
     | ~post_slash() => ()
+    | ~post_slash_regular() => ()
     | ~regular() => ()
     | ~post_newline_whitespace() => ()
     | ~post_block_comment() => ()
     | ~post_tick() => ()
+    | ~in_block_comment_first_line() => ()
+    | ~post_asterisk_in_block_comment_first_line() => ()
 
 implement empty_file =
   @{ lines = 0, blanks = 0, comments = 0, doc_comments = 0 } : file
@@ -76,7 +80,7 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
               | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
               | '\'' => (free(st) ; st := post_tick)
               | '"' => (free(st) ; st := in_string)
-              | '/' => (free(st) ; st := post_slash)
+              | '/' => (free(st) ; st := post_slash_regular)
               | _ => ()
           end
         | in_string() =>
@@ -95,6 +99,14 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
               | '*' => ()
               | _ => (free(st) ; st := in_block_comment)
           end
+        | post_asterisk_in_block_comment_first_line() =>
+          begin
+            case+ c of
+              | '/' => (free(st) ; st := regular)
+              | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment)
+              | '*' => ()
+              | _ => (free(st) ; st := in_block_comment_first_line)
+          end
         | in_block_comment() =>
           begin
             case+ c of
@@ -102,10 +114,23 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
               | '\n' => file_st.comments := file_st.comments + 1
               | _ => ()
           end
+        | in_block_comment_first_line() =>
+          begin
+            case+ c of
+              | '*' => (free(st) ; st := post_asterisk_in_block_comment_first_line)
+              | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment)
+              | _ => ()
+          end
         | line_comment() =>
           begin
             case+ c of
               | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
+              | _ => ()
+          end
+        | line_comment_end() =>
+          begin
+            case+ c of
+              | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
               | _ => ()
           end
         | ~post_backslash_in_string() =>
@@ -124,6 +149,16 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
               | '"' => st := in_string
               | _ => st := regular
           end
+        | ~post_slash_regular() =>
+          begin
+            case+ c of
+              | '/' => st := line_comment_end
+              | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+              | '*' => st := in_block_comment_first_line
+              | '\'' => st := post_tick
+              | '"' => st := in_string
+              | _ => st := regular
+          end
         | post_newline_whitespace() =>
           begin
             case+ c of
@@ -137,7 +172,6 @@ fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !byt
           end
         | post_block_comment() =>
           begin
-            // TODO: block comments at the end of a line
             case+ c of
               | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
               | ' ' => ()

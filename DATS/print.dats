@@ -23,3 +23,7 @@ implement parse_state_tostring (st) =
     | post_newline_whitespace() => "post_newline_whitespace"
     | post_block_comment() => "post_block_comment"
     | post_tick() => "post_tick"
+    | in_block_comment_first_line() => "in_block_comment_first_line"
+    | line_comment_end() => "line_comment_end"
+    | post_slash_regular() => "post_slash_regular"
+    | post_asterisk_in_block_comment_first_line() => "post_asterisk_in_block_comment_first_line"
