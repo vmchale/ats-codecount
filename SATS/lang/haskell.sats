@@ -1,3 +1,4 @@
+// TODO: make post_tick handling more rigorous since Haskell uses primed identifiers
 datavtype parse_state_hs =
   | in_string
   | in_block_comment of int

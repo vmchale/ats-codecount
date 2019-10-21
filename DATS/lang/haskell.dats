@@ -92,7 +92,7 @@ fn count_hs_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !
           begin
             case+ c of
               | '\n' => file_st.lines := file_st.lines + 1
-              | _ => ()
+              | _ => (free(st) ; st := in_string)
           end
         | line_comment() =>
           begin
