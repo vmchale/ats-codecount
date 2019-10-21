@@ -1,4 +1,4 @@
-datavtype parse_state =
+datavtype parse_state_hs =
   | in_string
   | in_block_comment of int
   | post_lbrace
@@ -6,8 +6,10 @@ datavtype parse_state =
   | post_backslash_in_string
   | line_comment
   | line_comment_end
-  | post_asterisk_in_block_comment of int
-  | post_asterisk_in_block_comment_first_line of int
+  | post_lbrace_in_block_comment of int
+  | post_lbrace_in_block_comment_first_line of int
+  | post_hyphen_in_block_comment of int
+  | post_hyphen_in_block_comment_first_line of int
   | regular
   | post_newline_whitespace
   | post_block_comment
@@ -16,8 +18,8 @@ datavtype parse_state =
   | post_hyphen
   | post_hyphen_regular
 
-fn parse_state_tostring(st : &parse_state >> _) : string
+fn parse_state_hs_tostring(st : &parse_state_hs >> _) : string
 
-fn free_st(parse_state) : void
+fn free_st(parse_state_hs) : void
 
 overload free with free_st
