@@ -44,7 +44,7 @@ fn harness_filecount_c() : void =
 
 fn harness_filecount_hs() : void =
   let
-    var inp = fopen("test/data/Fold.hs", file_mode_r)
+    var inp = fopen("test/data/Setup.hs", file_mode_r)
     val () = if FILEptr_is_null(inp) then
       let
         val () = fp_is_null(inp)
@@ -65,5 +65,5 @@ implement main0 () =
   {
     val () = print_slope("sqlite.c (for loop)", 7, harness_naive_delay)
     val () = print_slope("sqlite.c (filecount_c)", 5, harness_filecount_c_delay)
-    val () = print_slope("Control.Lens.Fold (filecount_hs)", 9, harness_filecount_hs_delay)
+    val () = print_slope("Distribution.Simple.Setup (filecount_hs)", 9, harness_filecount_hs_delay)
   }
