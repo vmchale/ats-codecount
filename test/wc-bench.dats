@@ -63,7 +63,7 @@ val harness_filecount_hs_delay: io = lam () => harness_filecount_hs()
 
 implement main0 () =
   {
-    val () = print_slope("sqlite.c (for loop)", 7, harness_naive_delay)
-    val () = print_slope("sqlite.c (filecount_c)", 5, harness_filecount_c_delay)
+    val () = print_slope("sqlite.c (for loop)", 8, harness_naive_delay)
+    val () = print_slope("sqlite.c (filecount_c)", 6, harness_filecount_c_delay)
     val () = print_slope("Distribution.Simple.Setup (filecount_hs)", 9, harness_filecount_hs_delay)
   }
