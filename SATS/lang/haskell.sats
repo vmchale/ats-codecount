@@ -15,6 +15,11 @@ datavtype parse_state_hs =
   | post_newline_whitespace
   | post_block_comment
   | post_tick
+  | post_backslash_after_tick
+  | in_char
+  | lbrace_after_tick
+  | hyphen_after_tick
+  | maybe_close_char
   | in_block_comment_first_line of int
   | post_hyphen
   | post_hyphen_regular

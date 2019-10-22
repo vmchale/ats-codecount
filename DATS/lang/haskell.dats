@@ -23,6 +23,11 @@ implement free_st (st) =
     | ~post_newline_whitespace() => ()
     | ~post_block_comment() => ()
     | ~post_tick() => ()
+    | ~post_backslash_after_tick() => ()
+    | ~in_char() => ()
+    | ~lbrace_after_tick() => ()
+    | ~hyphen_after_tick() => ()
+    | ~maybe_close_char() => ()
     | ~in_block_comment_first_line (_) => ()
     | ~post_hyphen() => ()
     | ~post_hyphen_regular() => ()
@@ -44,6 +49,11 @@ implement parse_state_hs_tostring (st) =
     | post_newline_whitespace() => "post_newline_whitespace"
     | post_block_comment() => "post_block_comment"
     | post_tick() => "post_tick"
+    | post_backslash_after_tick() => "post_backslash_after_tick"
+    | in_char() => "in_char"
+    | lbrace_after_tick() => "lbrace_after_tick"
+    | hyphen_after_tick() => "hyphen_after_tick"
+    | maybe_close_char() => "maybe_close_char"
     | in_block_comment_first_line (i) => "in_block_comment_first_line(" + tostring_int(i) + ")"
     | post_hyphen() => "post_hyphen"
     | post_hyphen_regular() => "post_hyphen_regular"
@@ -57,7 +67,7 @@ fn count_hs_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !
   let
     // TODO: generate or at least validate these functions
     fn advance_char(c : char, st : &parse_state_hs >> _, file_st : &file >> _) : void =
-      case- st of
+      case+ st of
         | in_string() =>
           begin
             case+ c of
@@ -176,8 +186,37 @@ fn count_hs_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !
           begin
             case+ c of
               | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+              | '\\' => st := post_backslash_after_tick
+              | '-' => st := hyphen_after_tick
+              | '\{' => st := lbrace_after_tick
+              | _ => st := maybe_close_char
+          end
+        | ~post_backslash_after_tick() => st := in_char
+        | in_char() =>
+          begin
+            case+ c of
+              | '\'' => (free(st) ; st := regular)
+              | _ => ()
+          end
+        | ~lbrace_after_tick() =>
+          begin
+            case+ c of
+              | '-' => st := in_block_comment_first_line(1)
+              | '\{' => st := post_lbrace_regular
+              | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+              | '"' => st := in_string
               | _ => st := regular
           end
+        | ~hyphen_after_tick() =>
+          begin
+            case+ c of
+              | '-' => st := line_comment_end
+              | '\{' => st := post_lbrace_regular
+              | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+              | '"' => st := in_string
+              | _ => st := regular
+          end
+        | ~maybe_close_char() => st := regular
         | in_block_comment_first_line (n) =>
           begin
             case+ c of
