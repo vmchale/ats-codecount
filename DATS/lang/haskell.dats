@@ -89,20 +89,22 @@ fn count_hs_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !
             case+ c of
               | '-' => (free(st) ; st := in_block_comment(1))
               | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-              | _ => ()
+              | '\{' => ()
+              | _ => (free(st) ; st := regular)
           end
         | post_lbrace_regular() =>
           begin
             case+ c of
               | '-' => (free(st) ; st := in_block_comment_first_line(1))
               | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-              | _ => ()
+              | '\{' => ()
+              | _ => (free(st) ; st := regular)
           end
-        | post_backslash_in_string() =>
+        | ~post_backslash_in_string() =>
           begin
             case+ c of
-              | '\n' => file_st.lines := file_st.lines + 1
-              | _ => (free(st) ; st := in_string)
+              | '\n' => (file_st.lines := file_st.lines + 1 ; st := in_string)
+              | _ => st := in_string
           end
         | line_comment() =>
           begin
@@ -168,6 +170,7 @@ fn count_hs_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !
               | ' ' => ()
               | '-' => (free(st) ; st := post_hyphen)
               | '\{' => (free(st) ; st := post_lbrace)
+              | '"' => (free(st) ; st := in_string)
               | _ => (free(st) ; st := regular)
           end
         | post_block_comment() =>
@@ -189,6 +192,7 @@ fn count_hs_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !
               | '\\' => st := post_backslash_after_tick
               | '-' => st := hyphen_after_tick
               | '\{' => st := lbrace_after_tick
+              | '\'' => st := regular
               | _ => st := maybe_close_char
           end
         | ~post_backslash_after_tick() => st := in_char
