@@ -90,6 +90,7 @@ fn count_hs_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !
               | '-' => (free(st) ; st := in_block_comment(1))
               | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
               | '\{' => ()
+              | '"' => (free(st) ; st := in_string)
               | _ => (free(st) ; st := regular)
           end
         | post_lbrace_regular() =>
@@ -98,6 +99,7 @@ fn count_hs_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !
               | '-' => (free(st) ; st := in_block_comment_first_line(1))
               | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
               | '\{' => ()
+              | '"' => (free(st) ; st := in_string)
               | _ => (free(st) ; st := regular)
           end
         | ~post_backslash_in_string() =>
