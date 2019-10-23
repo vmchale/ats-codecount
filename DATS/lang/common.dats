@@ -59,7 +59,7 @@ fn {a:vt@ype} count_file(inp : !FILEptr1) : file =
     ret
   end
 
-fn {a:vt@ype} filecount(fp : string) : void =
+implement {a} filecount (fp) =
   let
     var inp = fopen(fp, file_mode_r)
     val () = if FILEptr_is_null(inp) then
