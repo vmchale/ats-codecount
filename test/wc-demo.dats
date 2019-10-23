@@ -6,6 +6,7 @@
 #include "DATS/lang/c.dats"
 #include "DATS/lang/haskell.dats"
 #include "DATS/lang/j.dats"
+#include "DATS/lang/vimscript.dats"
 #include "DATS/pointer.dats"
 
 implement main0 (argc, argv) =
