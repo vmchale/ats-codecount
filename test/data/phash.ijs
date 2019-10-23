@@ -9,6 +9,8 @@ cos =. 2 & o.
 (%: (2 % N)) * cos (((2 * x + 1) * y * 1p1) % (2 * N))
 )
 
+str =: 'NB. this is a string'
+
 NB. coefficients of the 32x32 DCT matrix
 coeffs =: (i.32) atIndex " 0 / (i.32)
 
