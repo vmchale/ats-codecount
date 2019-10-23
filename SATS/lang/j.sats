@@ -1,11 +1,7 @@
 datavtype parse_state_j =
-  | in_string
   | post_n
   | post_b
-  | post_n_regular
-  | post_b_regular
   | line_comment
-  | line_comment_end
   | regular
   | post_newline_whitespace
 
