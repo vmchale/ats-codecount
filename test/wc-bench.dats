@@ -7,8 +7,6 @@ staload "libats/libc/SATS/stdio.sats"
 #include "DATS/lang/haskell.dats"
 #include "DATS/pointer.dats"
 
-#define BUFSZ 32768
-
 extern
 castfn fp_is_null { l : addr | l == null }{m:fm} (FILEptr(l,m)) :<> void
 
@@ -37,7 +35,7 @@ fn harness_filecount_c() : void =
       in end
     else
       let
-        var newlines = count_file_c(inp)
+        var newlines = count_file<parse_state_c>(inp)
         val () = fclose1_exn(inp)
       in end
   in end
@@ -52,7 +50,7 @@ fn harness_filecount_hs() : void =
       in end
     else
       let
-        var newlines = count_file_hs(inp)
+        var newlines = count_file<parse_state_hs>(inp)
         val () = fclose1_exn(inp)
       in end
   in end

@@ -1,3 +1,4 @@
+staload "libats/libc/SATS/stdio.sats"
 staload "SATS/pointer.sats"
 staload "SATS/file.sats"
 staload "SATS/lang/common.sats"
@@ -57,3 +58,22 @@ fn {a:vt@ype} count_file(inp : !FILEptr1) : file =
   in
     ret
   end
+
+fn {a:vt@ype} filecount(fp : string) : void =
+  let
+    var inp = fopen(fp, file_mode_r)
+    val () = if FILEptr_is_null(inp) then
+      let
+        extern
+        castfn fp_is_null { l : addr | l == null }{m:fm} (FILEptr(l,m)) :<> void
+
+        val () = fp_is_null(inp)
+        val () = println!("failed to open file")
+      in end
+    else
+      let
+        var newlines = count_file<a>(inp)
+        val () = println!(file_tostring(newlines))
+        val () = fclose1_exn(inp)
+      in end
+  in end

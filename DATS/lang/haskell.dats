@@ -255,6 +255,3 @@ implement advance_char$lang<parse_state_hs> (c, st, file_st) =
 
 implement init$lang<parse_state_hs> (st) =
   st := post_newline_whitespace
-
-fn count_file_hs(inp : !FILEptr1) : file =
-  count_file<parse_state_hs>(inp)
