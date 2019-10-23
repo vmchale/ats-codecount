@@ -26,10 +26,8 @@ fn {a:vt@ype} count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }
     res
   end
 
-fn {a:vt@ype} count_file(inp : !FILEptr1) : file =
+fn {a:vt@ype} count_file_buf { l : addr | l != null }(pf : !bytes_v(l, BUFSZ) | p : ptr(l), inp : !FILEptr1) : file =
   let
-    val (pfat, pfgc | p) = malloc_gc(g1i2u(BUFSZ))
-    prval () = pfat := b0ytes2bytes_v(pfat)
     var init_st: a
     val () = init$lang<a>(init_st)
 
@@ -52,8 +50,17 @@ fn {a:vt@ype} count_file(inp : !FILEptr1) : file =
           end
       end
 
-    var ret = loop(pfat | inp, init_st, p)
+    var ret = loop(pf | inp, init_st, p)
     val () = free$lang<a>(init_st)
+  in
+    ret
+  end
+
+fn {a:vt@ype} count_file(inp : !FILEptr1) : file =
+  let
+    val (pfat, pfgc | p) = malloc_gc(g1i2u(BUFSZ))
+    prval () = pfat := b0ytes2bytes_v(pfat)
+    var ret = count_file_buf<a>(pfat | p, inp)
     val () = mfree_gc(pfat, pfgc | p)
   in
     ret
