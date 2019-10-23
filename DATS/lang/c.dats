@@ -41,143 +41,145 @@ implement parse_state_c_tostring (st) =
     | post_slash_regular() => "post_slash_regular"
     | post_asterisk_in_block_comment_first_line() => "post_asterisk_in_block_comment_first_line"
 
-fn count_c_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !bytes_v(l, m) | p : ptr(l)
-                                                                       , parse_st : &parse_state_c >> _
-                                                                       , bufsz : size_t(n)
-                                                                       ) : file =
-  let
-    // TODO: generate or at least validate these functions
-    fn advance_char(c : char, st : &parse_state_c >> _, file_st : &file >> _) : void =
-      case+ st of
-        | regular() =>
-          begin
-            case+ c of
-              | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-              | '\'' => (free(st) ; st := post_tick)
-              | '"' => (free(st) ; st := in_string)
-              | '/' => (free(st) ; st := post_slash_regular)
-              | _ => ()
-          end
-        | in_string() =>
-          begin
-            case+ c of
-              | '\n' => file_st.lines := file_st.lines + 1
-              | '\\' => (free(st) ; st := post_backslash_in_string)
-              | '"' => (free(st) ; st := regular)
-              | _ => ()
-          end
-        | post_asterisk_in_block_comment() =>
-          begin
-            case+ c of
-              | '/' => (free(st) ; st := post_block_comment)
-              | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := in_block_comment)
-              | '*' => ()
-              | _ => (free(st) ; st := in_block_comment)
-          end
-        | post_asterisk_in_block_comment_first_line() =>
-          begin
-            case+ c of
-              | '/' => (free(st) ; st := regular)
-              | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment)
-              | '*' => ()
-              | _ => (free(st) ; st := in_block_comment_first_line)
-          end
-        | in_block_comment() =>
-          begin
-            case+ c of
-              | '*' => (free(st) ; st := post_asterisk_in_block_comment)
-              | '\n' => file_st.comments := file_st.comments + 1
-              | _ => ()
-          end
-        | in_block_comment_first_line() =>
-          begin
-            case+ c of
-              | '*' => (free(st) ; st := post_asterisk_in_block_comment_first_line)
-              | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment)
-              | _ => ()
-          end
-        | line_comment() =>
-          begin
-            case+ c of
-              | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
-              | _ => ()
-          end
-        | line_comment_end() =>
-          begin
-            case+ c of
-              | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-              | _ => ()
-          end
-        | ~post_backslash_in_string() =>
-          begin
-            case+ c of
-              | '\n' => (file_st.lines := file_st.lines + 1 ; st := in_string)
-              | _ => (st := in_string)
-          end
-        | ~post_slash() =>
-          begin
-            case+ c of
-              | '/' => st := line_comment
-              | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-              | '*' => st := in_block_comment
-              | '\'' => st := post_tick
-              | '"' => st := in_string
-              | _ => st := regular
-          end
-        | ~post_slash_regular() =>
-          begin
-            case+ c of
-              | '/' => st := line_comment_end
-              | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-              | '*' => st := in_block_comment_first_line
-              | '\'' => st := post_tick
-              | '"' => st := in_string
-              | _ => st := regular
-          end
-        | post_newline_whitespace() =>
-          begin
-            case+ c of
-              | '\n' => (file_st.blanks := file_st.blanks + 1)
-              | '\t' => ()
-              | ' ' => ()
-              | '/' => (free(st) ; st := post_slash)
-              | '\'' => (free(st) ; st := post_tick)
-              | '"' => (free(st) ; st := in_string)
-              | _ => (free(st) ; st := regular)
-          end
-        | post_block_comment() =>
-          begin
-            case+ c of
-              | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
-              | ' ' => ()
-              | '\t' => ()
-              | '/' => (free(st) ; st := post_slash)
-              | '"' => (free(st) ; st := in_string)
-              | '\'' => (free(st) ; st := post_tick)
-              | _ => (free(st) ; st := regular)
-          end
-        | ~post_tick() =>
-          begin
-            case+ c of
-              | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-              | _ => st := regular
-          end
+extern
+fun {a:vt@ype} advance_char$lang_ (char, &a >> _, &file >> _) : void
 
-    var res: file = empty_file
-    var i: size_t
-    val () = for* { i : nat | i <= n } .<n-i>. (i : size_t(i)) =>
-        (i := i2sz(0) ; i < bufsz ; i := i + 1)
-        (let
-          var current_char = byteview_read_as_char(pf | add_ptr_bsz(p, i))
-        in
-          advance_char(current_char, parse_st, res)
-        end)
-  in
-    res
-  end
+implement advance_char$lang_<parse_state_c> (c, st, file_st) =
+  case+ st of
+    | regular() =>
+      begin
+        case+ c of
+          | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+          | '\'' => (free(st) ; st := post_tick)
+          | '"' => (free(st) ; st := in_string)
+          | '/' => (free(st) ; st := post_slash_regular)
+          | _ => ()
+      end
+    | in_string() =>
+      begin
+        case+ c of
+          | '\n' => file_st.lines := file_st.lines + 1
+          | '\\' => (free(st) ; st := post_backslash_in_string)
+          | '"' => (free(st) ; st := regular)
+          | _ => ()
+      end
+    | post_asterisk_in_block_comment() =>
+      begin
+        case+ c of
+          | '/' => (free(st) ; st := post_block_comment)
+          | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := in_block_comment)
+          | '*' => ()
+          | _ => (free(st) ; st := in_block_comment)
+      end
+    | post_asterisk_in_block_comment_first_line() =>
+      begin
+        case+ c of
+          | '/' => (free(st) ; st := regular)
+          | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment)
+          | '*' => ()
+          | _ => (free(st) ; st := in_block_comment_first_line)
+      end
+    | in_block_comment() =>
+      begin
+        case+ c of
+          | '*' => (free(st) ; st := post_asterisk_in_block_comment)
+          | '\n' => file_st.comments := file_st.comments + 1
+          | _ => ()
+      end
+    | in_block_comment_first_line() =>
+      begin
+        case+ c of
+          | '*' => (free(st) ; st := post_asterisk_in_block_comment_first_line)
+          | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment)
+          | _ => ()
+      end
+    | line_comment() =>
+      begin
+        case+ c of
+          | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
+          | _ => ()
+      end
+    | line_comment_end() =>
+      begin
+        case+ c of
+          | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+          | _ => ()
+      end
+    | ~post_backslash_in_string() =>
+      begin
+        case+ c of
+          | '\n' => (file_st.lines := file_st.lines + 1 ; st := in_string)
+          | _ => (st := in_string)
+      end
+    | ~post_slash() =>
+      begin
+        case+ c of
+          | '/' => st := line_comment
+          | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+          | '*' => st := in_block_comment
+          | '\'' => st := post_tick
+          | '"' => st := in_string
+          | _ => st := regular
+      end
+    | ~post_slash_regular() =>
+      begin
+        case+ c of
+          | '/' => st := line_comment_end
+          | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+          | '*' => st := in_block_comment_first_line
+          | '\'' => st := post_tick
+          | '"' => st := in_string
+          | _ => st := regular
+      end
+    | post_newline_whitespace() =>
+      begin
+        case+ c of
+          | '\n' => (file_st.blanks := file_st.blanks + 1)
+          | '\t' => ()
+          | ' ' => ()
+          | '/' => (free(st) ; st := post_slash)
+          | '\'' => (free(st) ; st := post_tick)
+          | '"' => (free(st) ; st := in_string)
+          | _ => (free(st) ; st := regular)
+      end
+    | post_block_comment() =>
+      begin
+        case+ c of
+          | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
+          | ' ' => ()
+          | '\t' => ()
+          | '/' => (free(st) ; st := post_slash)
+          | '"' => (free(st) ; st := in_string)
+          | '\'' => (free(st) ; st := post_tick)
+          | _ => (free(st) ; st := regular)
+      end
+    | ~post_tick() =>
+      begin
+        case+ c of
+          | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+          | _ => st := regular
+      end
 
 fn count_file_c(inp : !FILEptr1) : file =
   let
+    fn count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !bytes_v(l, m) | p : ptr(l)
+                                                                         , parse_st : &parse_state_c >> _
+                                                                         , bufsz : size_t(n)
+                                                                         ) : file =
+      let
+        var res: file = empty_file
+        var i: size_t
+        val () = for* { i : nat | i <= n } .<n-i>. (i : size_t(i)) =>
+            (i := i2sz(0) ; i < bufsz ; i := i + 1)
+            (let
+              var current_char = byteview_read_as_char(pf | add_ptr_bsz(p, i))
+            in
+              advance_char$lang_<parse_state_c>(current_char, parse_st, res)
+            end)
+      in
+        res
+      end
+
     val (pfat, pfgc | p) = malloc_gc(g1i2u(BUFSZ))
     prval () = pfat := b0ytes2bytes_v(pfat)
     var init_st: parse_state_c = post_newline_whitespace
@@ -196,7 +198,7 @@ fn count_file_c(inp : !FILEptr1) : file =
           let
             var fb_prf = bounded(file_bytes)
             prval () = lt_bufsz(fb_prf)
-            var acc = count_c_for_loop(pf | p, st, fb_prf)
+            var acc = count_for_loop(pf | p, st, fb_prf)
           in
             acc + loop(pf | inp, st, p)
           end

@@ -222,7 +222,14 @@ fn count_hs_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }( pf : !
               | '"' => st := in_string
               | _ => st := regular
           end
-        | ~maybe_close_char() => st := regular
+        | ~maybe_close_char() => begin
+            case+ c of
+                | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+                | '"' => st := in_string
+                | '-' => st := post_hyphen
+                | '\{' => st := post_lbrace_regular
+                | _ => st := regular
+                end
         | in_block_comment_first_line (n) =>
           begin
             case+ c of
