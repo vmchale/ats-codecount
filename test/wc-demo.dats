@@ -9,15 +9,23 @@
 #include "DATS/lang/vimscript.dats"
 #include "DATS/pointer.dats"
 
+fn prext(fp : string) : void =
+  let
+    val (pf | str) = filename_get_ext(fp)
+    val match: string = if strptr2ptr(str) > 0 then
+      $UN.strptr2string(str)
+    else
+      ""
+    val () = case+ match of
+      | "hs" => filecount<parse_state_hs>(fp)
+      | "c" => filecount<parse_state_c>(fp)
+      | "ijs" => filecount<parse_state_j>(fp)
+      | _ => ()
+    prval () = pf(str)
+  in end
+
 implement main0 (argc, argv) =
   if argc > 1 then
-    {
-      val () = println!("C filecount")
-      val () = filecount<parse_state_c>(argv[1])
-      val () = println!("Haskell filecount")
-      val () = filecount<parse_state_hs>(argv[1])
-      val () = println!("J filecount")
-      val () = filecount<parse_state_j>(argv[1])
-    }
+    { val () = prext(argv[1]) }
   else
     (println!("No file provided") ; exit(1))
