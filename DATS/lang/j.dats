@@ -29,6 +29,9 @@ implement parse_state_j_tostring (st) =
 implement free$lang<parse_state_j> (st) =
   free_st_j(st)
 
+implement init$lang<parse_state_j> (st) =
+  st := post_newline_whitespace
+
 implement advance_char$lang<parse_state_j> (c, st, file_st) =
   case+ st of
     | regular() =>
@@ -36,7 +39,7 @@ implement advance_char$lang<parse_state_j> (c, st, file_st) =
         case+ c of
           | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
           | '\'' => (free(st) ; st := in_string)
-          | 'N' => (free(st) ; st := post_n)
+          | 'N' => (free(st) ; st := post_n_regular)
           | _ => ()
       end
     | post_n() =>
@@ -100,5 +103,6 @@ implement advance_char$lang<parse_state_j> (c, st, file_st) =
           | '\t' => ()
           | ' ' => ()
           | '\'' => (free(st) ; st := in_string)
+          | 'N' => (free(st) ; st := post_n)
           | _ => (free(st) ; st := regular)
       end
