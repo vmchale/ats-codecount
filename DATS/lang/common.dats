@@ -17,11 +17,11 @@ fn {a:vt@ype} count_for_loop { l : addr | l != null }{m:nat}{ n : nat | n <= m }
     var i: size_t
     val () = for* { i : nat | i <= n } .<n-i>. (i : size_t(i)) =>
         (i := i2sz(0) ; i < bufsz ; i := i + 1)
-        (let
+        let
           var current_char = byteview_read_as_char(pf | add_ptr_bsz(p, i))
         in
           advance_char$lang<a>(current_char, parse_st, res)
-        end)
+        end
   in
     res
   end
@@ -68,7 +68,7 @@ fn {a:vt@ype} filecount(fp : string) : void =
         castfn fp_is_null { l : addr | l == null }{m:fm} (FILEptr(l,m)) :<> void
 
         val () = fp_is_null(inp)
-        val () = println!("failed to open file")
+        val () = prerr!("failed to open file")
       in end
     else
       let
