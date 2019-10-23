@@ -22,19 +22,19 @@ implement init$lang<parse_state_vim> (st) =
 
 implement advance_char$lang<parse_state_vim> (c, st, file_st) =
   case+ st of
-    | regular() => 
+    | regular() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
           | _ => ()
       end
-    | line_comment() => 
+    | line_comment() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
           | _ => ()
       end
-    | post_newline_whitespace() => 
+    | post_newline_whitespace() =>
       begin
         case+ c of
           | '\n' => (file_st.blanks := file_st.blanks + 1)
