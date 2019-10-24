@@ -7,8 +7,10 @@ in prelude.default ⫽
       , target = "${prelude.atsProject}/wc-bench"
       , gcBin = True
       }
-    , prelude.bin ⫽
-      { src = "test/wc-demo.dats"
+    ]
+  , bin =
+    [ prelude.bin ⫽
+      { src = "src/wc-demo.dats"
       , target = "${prelude.atsProject}/wc-demo"
       }
     ]
