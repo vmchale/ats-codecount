@@ -29,6 +29,6 @@ fn prext(fp : string) : void =
 
 implement main0 (argc, argv) =
   if argc > 1 then
-    { val () = prext(argv[1]) }
+    prext(argv[1])
   else
     (prerr!("No file provided\n") ; exit(1))
