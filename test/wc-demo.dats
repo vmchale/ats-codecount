@@ -20,7 +20,7 @@ fn prext(fp : string) : void =
       | "hs" => filecount<parse_state_hs>(fp)
       | "c" => filecount<parse_state_c>(fp)
       | "ijs" => filecount<parse_state_j>(fp)
-      | _ => ()
+      | _ => prerr!("Unknown file type\n")
     prval () = pf(str)
   in end
 
@@ -28,4 +28,4 @@ implement main0 (argc, argv) =
   if argc > 1 then
     { val () = prext(argv[1]) }
   else
-    (println!("No file provided") ; exit(1))
+    (prerr!("No file provided\n") ; exit(1))
