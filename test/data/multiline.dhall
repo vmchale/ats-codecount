@@ -6,6 +6,7 @@ let foo =
       -- not a comment
       {- not the beginning of a comment
       ''' escaped tick
+
       docker build -f frontend/Dockerfile-prod \
         --build-arg OAUTH_GITHUB_CLIENT_ID=''${OAUTH_GITHUB_CLIENT_ID-""} \
         --build-arg OAUTH_GITLAB_CLIENT_ID=''${OAUTH_GITLAB_CLIENT_ID-""} \
