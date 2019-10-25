@@ -1,4 +1,7 @@
 {- a block comment -}
+let str = "not beginning of multiline \" string''"
+in
+
 let foo =
       ''
       docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"

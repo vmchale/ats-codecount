@@ -26,6 +26,8 @@ implement free_st_dhall (st) =
     | ~in_block_comment_first_line (_) => ()
     | ~post_hyphen() => ()
     | ~post_hyphen_regular() => ()
+    | ~in_string() => ()
+    | ~post_backslash_in_string() => ()
 
 implement parse_state_dhall_tostring (st) =
   case+ st of
@@ -49,6 +51,8 @@ implement parse_state_dhall_tostring (st) =
     | in_block_comment_first_line (i) => "in_block_comment_first_line(" + tostring_int(i) + ")"
     | post_hyphen() => "post_hyphen"
     | post_hyphen_regular() => "post_hyphen_regular"
+    | in_string() => "in_string"
+    | post_backslash_in_string() => "post_backslash_in_string"
 
 implement free$lang<parse_state_dhall> (st) =
   free_st_dhall(st)
@@ -69,6 +73,7 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
             | '-' => (free(st) ; st := post_hyphen_regular)
             | '\{' => (free(st) ; st := post_lbrace_regular)
+            | '"' => (free(st) ; st := in_string)
             | _ => ()
         end
       | ~post_tick_in_multiline_string() =>
@@ -110,6 +115,7 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '\{' => ()
             | '\'' => (free(st) ; st := post_tick)
             | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+            | '"' => (free(st) ; st := in_string)
             | _ => (free(st) ; st := regular)
         end
       | post_lbrace_regular() =>
@@ -119,6 +125,7 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '\{' => ()
             | '\'' => (free(st) ; st := post_tick)
             | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+            | '"' => (free(st) ; st := in_string)
             | _ => (free(st) ; st := regular)
         end
       | line_comment() =>
@@ -176,6 +183,7 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '-' => (free(st) ; st := post_hyphen)
             | '\{' => (free(st) ; st := post_lbrace)
             | '\'' => (free(st) ; st := post_tick)
+            | '"' => (free(st) ; st := in_string)
             | _ => (free(st) ; st := regular)
         end
       | post_block_comment() =>
@@ -184,6 +192,8 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
             | ' ' => ()
             | '\t' => ()
+            | '\'' => (free(st) ; st := post_tick)
+            | '"' => (free(st) ; st := in_string)
             | _ => (free(st) ; st := regular)
         end
       | ~post_tick() =>
@@ -193,6 +203,7 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
             | '-' => st := post_hyphen_regular
             | '\{' => st := post_lbrace_regular
+            | '"' => st := in_string
             | _ => st := regular
         end
       | in_block_comment_first_line (i) =>
@@ -210,6 +221,7 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '\'' => st := post_tick
             | '\{' => st := post_lbrace
             | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+            | '"' => st := in_string
             | _ => st := regular
         end
       | ~post_hyphen_regular() =>
@@ -219,6 +231,7 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '\'' => st := post_tick
             | '\{' => st := post_lbrace
             | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+            | '"' => st := in_string
             | _ => st := regular
         end
       | in_multiline_string() =>
@@ -228,4 +241,12 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '\n' => file_st.lines := file_st.lines + 1
             | _ => ()
         end
+      | in_string() =>
+        begin
+          case+ c of
+            | '"' => (free(st) ; st := regular)
+            | '\\' => (free(st) ; st := post_backslash_in_string)
+            | _ => ()
+        end
+      | ~post_backslash_in_string() => st := in_string
   end

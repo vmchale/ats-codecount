@@ -20,6 +20,8 @@ datavtype parse_state_dhall =
   | in_block_comment_first_line of int
   | post_hyphen
   | post_hyphen_regular
+  | in_string
+  | post_backslash_in_string
 
 fn parse_state_dhall_tostring(st : &parse_state_dhall >> _) : string
 
