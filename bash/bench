@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-dir="test/data"
-file="${dir}/sqlite3.c"
+file="test/data/sqlite3.c"
 bench "./target/wc-demo $file" \
     "loc -u $file" \
     "tokei --no-ignore-vcs --no-ignore $file" \
     "scc -c --no-cocomo --binary --no-gitignore --no-ignore $file" \
     "cloc $file" \
-    "lang ${dir}"
+    "lang ${file}"
