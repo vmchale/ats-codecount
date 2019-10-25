@@ -11,6 +11,8 @@ module Pathological ( håskell ) where
  -}
 {- this is a second block comment -}
 
+str :: String
+str = "This is not the beginning of a doc comment {- "
 
 -- | This is a doc comment {-
 håskell :: Int
