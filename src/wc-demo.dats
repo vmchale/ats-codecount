@@ -6,7 +6,6 @@
 #include "DATS/lang/c.dats"
 #include "DATS/lang/haskell.dats"
 #include "DATS/lang/j.dats"
-#include "DATS/lang/vimscript.dats"
 #include "DATS/lang/dhall.dats"
 #include "DATS/lang/futhark.dats"
 #include "DATS/lang/egison.dats"
@@ -23,7 +22,6 @@ fn prext(fp : string) : void =
       | "hs" => filecount<parse_state_hs>(fp)
       | "c" => filecount<parse_state_c>(fp)
       | "ijs" => filecount<parse_state_j>(fp)
-      | "vim" => filecount<parse_state_vim>(fp)
       | "dhall" => filecount<parse_state_dhall>(fp)
       | "fut" => filecount<parse_state_fut>(fp)
       | "egi" => filecount<parse_state_egi>(fp)
