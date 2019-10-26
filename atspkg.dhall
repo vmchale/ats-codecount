@@ -7,6 +7,11 @@ in prelude.default ⫽
       , target = "${prelude.atsProject}/wc-bench"
       , gcBin = True
       }
+    , prelude.bin ⫽
+      { src = "test/spec.dats"
+      , target = "${prelude.atsProject}/spec"
+      , gcBin = True
+      }
     ]
   , bin =
     [ prelude.bin ⫽
@@ -14,6 +19,6 @@ in prelude.default ⫽
       , target = "${prelude.atsProject}/wc-demo"
       }
     ]
-  , dependencies = prelude.mapPlainDeps [ "ats-bench" ]
+  , dependencies = prelude.mapPlainDeps [ "ats-bench", "specats" ]
   , cflags = [ "-O2", "-flto" ]
   }

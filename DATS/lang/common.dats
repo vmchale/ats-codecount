@@ -67,20 +67,28 @@ fn {a:vt@ype} count_file(inp : !FILEptr1) : file =
   end
 
 implement {a} filecount (fp) =
+  case+ file$lang<a>(fp) of
+    | ~Some_vt (res) => println!(file_tostring(res))
+    | ~None_vt() => prerr!("failed to open file\n")
+
+implement {a} file$lang (fp) =
   let
     var inp = fopen(fp, file_mode_r)
-    val () = if FILEptr_is_null(inp) then
+  in
+    if FILEptr_is_null(inp) then
       let
         extern
         castfn fp_is_null { l : addr | l == null }{m:fm} (FILEptr(l,m)) :<> void
 
         val () = fp_is_null(inp)
-        val () = prerr!("failed to open file\n")
-      in end
+      in
+        None_vt
+      end
     else
       let
         var newlines = count_file<a>(inp)
-        val () = println!(file_tostring(newlines))
         val () = fclose1_exn(inp)
-      in end
-  in end
+      in
+        Some_vt(newlines)
+      end
+  end
