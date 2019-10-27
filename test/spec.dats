@@ -7,6 +7,7 @@
 #include "DATS/lang/c.dats"
 #include "DATS/lang/dhall.dats"
 #include "DATS/lang/haskell.dats"
+#include "DATS/lang/rust.dats"
 
 fn {a:vt@ype} file_test(expected : file, fp : string) : bool =
   let
@@ -52,6 +53,13 @@ fn test_setup_hs() : bool =
     file_test<parse_state_hs>(expected, "test/data/Setup.hs")
   end
 
+fn test_rs() : bool =
+  let
+    val expected = @{ lines = 13, blanks = 3, comments = 4, doc_comments = 0 } : file
+  in
+    file_test<parse_state_rs>(expected, "test/data/pathological.rs")
+  end
+
 implement main0 () =
   {
     var n0 = @{ test_name = "dhall", test_result = test_dhall() }
@@ -59,7 +67,8 @@ implement main0 () =
     var n2 = @{ test_name = "haskell", test_result = test_hs() }
     var n3 = @{ test_name = "setup_hs", test_result = test_setup_hs() }
     var n4 = @{ test_name = "pkg_set_dhall", test_result = test_pkg_set_dhall() }
-    var xs = n4 :: n3 :: n2 :: n1 :: n0 :: nil
+    var n5 = @{ test_name = "rust", test_result = test_rs() }
+    var xs = n5 :: n4 :: n3 :: n2 :: n1 :: n0 :: nil
     var total = list_vt_length(xs)
     val g = @{ group = "filecount", leaves = xs } : test_tree
     val () = iterate_list(g, 0, total)
