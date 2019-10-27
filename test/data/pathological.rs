@@ -13,7 +13,8 @@ fn return_str() -> &'static str {
 fn normie_str() -> &'static str {
     "This is a
     string literal
-    //"
+    //" /*begin block comment
+        one more line */
 }
 
 fn return_char() -> char {

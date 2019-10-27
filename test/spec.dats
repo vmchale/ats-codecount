@@ -55,7 +55,7 @@ fn test_setup_hs() : bool =
 
 fn test_rs() : bool =
   let
-    val expected = @{ lines = 18, blanks = 4, comments = 4, doc_comments = 0 } : file
+    val expected = @{ lines = 18, blanks = 4, comments = 5, doc_comments = 0 } : file
   in
     file_test<parse_state_rs>(expected, "test/data/pathological.rs")
   end
