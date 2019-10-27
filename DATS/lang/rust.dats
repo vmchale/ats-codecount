@@ -67,7 +67,7 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
       prerr!("\33[33mWarning:\33[0m inconsistent state in Rust lexer.\n")
   in
     case+ st of
-      | regular() => 
+      | regular() =>
         begin
           case+ c of
             | '\'' => (free(st) ; st := post_tick)
@@ -77,28 +77,29 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | 'r' => (free(st) ; st := post_r)
             | _ => ()
         end
-      | line_comment() => 
+      | line_comment() =>
         begin
           case+ c of
             | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
             | _ => ()
         end
-      | line_comment_regular() => 
+      | line_comment_regular() =>
         begin
           case+ c of
             | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
             | _ => ()
         end
-      | post_r() => 
+      | post_r() =>
         begin
           case+ c of
             | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
             | '#' => (free(st) ; st := post_r_hash(1))
             | '"' => (free(st) ; st := in_string)
             | '\'' => (free(st) ; st := post_tick)
-            | _ => ()
+            | 'r' => ()
+            | _ => (free(st) ; st := regular)
         end
-      | in_string() => 
+      | in_string() =>
         begin
           case+ c of
             | '\\' => (free(st) ; st := post_backslash_in_string)
@@ -106,7 +107,7 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | '"' => (free(st) ; st := regular)
             | _ => ()
         end
-      | ~post_slash() => 
+      | ~post_slash() =>
         begin
           case+ c of
             | '/' => st := line_comment
@@ -117,7 +118,7 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
             | _ => st := regular
         end
-      | ~post_slash_regular() => 
+      | ~post_slash_regular() =>
         begin
           case+ c of
             | '/' => st := line_comment_regular
@@ -128,27 +129,27 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
             | _ => st := regular
         end
-      | ~post_backslash_in_string() => 
+      | ~post_backslash_in_string() =>
         begin
           case+ c of
             | '\n' => (file_st.lines := file_st.lines + 1 ; st := in_string)
             | _ => st := in_string
         end
-      | ~post_r_hash (i) => 
+      | ~post_r_hash (i) =>
         begin
           case+ c of
             | '#' => st := post_r_hash(i + 1)
             | '"' => st := in_raw_string(i)
             | _ => (pr_warning() ; st := regular)
         end
-      | in_raw_string (i) => 
+      | in_raw_string (i) =>
         begin
           case+ c of
             | '"' => (free(st) ; st := maybe_close_hash(i, 0))
             | '\n' => file_st.lines := file_st.lines + 1
             | _ => ()
         end
-      | ~maybe_close_hash (i, j) => 
+      | ~maybe_close_hash (i, j) =>
         begin
           case+ c of
             | '#' when i = j + 1 => st := regular
@@ -156,21 +157,23 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | '\n' => (file_st.lines := file_st.lines + 1 ; st := in_raw_string(i))
             | _ => st := in_raw_string(i)
         end
-      | in_block_comment (i) => 
+      | in_block_comment (i) =>
         begin
           case+ c of
             | '\n' => file_st.comments := file_st.comments + 1
             | '/' => (free(st) ; st := post_slash_in_block_comment(i))
+            | '*' => (free(st) ; st := post_asterisk_in_block_comment(i))
             | _ => ()
         end
-      | in_block_comment_first_line (i) => 
+      | in_block_comment_first_line (i) =>
         begin
           case+ c of
             | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment(i))
             | '/' => (free(st) ; st := post_slash_in_block_comment_first_line(i))
+            | '*' => (free(st) ; st := post_asterisk_in_block_comment_first_line(i))
             | _ => ()
         end
-      | post_slash_in_block_comment (i) => 
+      | post_slash_in_block_comment (i) =>
         begin
           case+ c of
             | '\n' => file_st.comments := file_st.comments + 1
@@ -178,7 +181,7 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | '/' => ()
             | _ => (free(st) ; st := in_block_comment(i))
         end
-      | post_slash_in_block_comment_first_line (i) => 
+      | post_slash_in_block_comment_first_line (i) =>
         begin
           case+ c of
             | '\n' => file_st.lines := file_st.lines + 1
@@ -186,25 +189,25 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | '/' => ()
             | _ => (free(st) ; st := in_block_comment_first_line(i))
         end
-      | post_asterisk_in_block_comment (i) => 
+      | post_asterisk_in_block_comment (i) =>
         begin
           case+ c of
-            | '/' when i - 1 = 0 => (free(st) ; st := regular)
+            | '/' when i - 1 = 0 => (free(st) ; st := post_block_comment)
             | '/' => (free(st) ; st := post_asterisk_in_block_comment(i - 1))
             | '*' => ()
             | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := in_block_comment(i))
             | _ => ()
         end
-      | post_asterisk_in_block_comment_first_line (i) => 
+      | post_asterisk_in_block_comment_first_line (i) =>
         begin
           case+ c of
-            | '/' when i - 1 = 0 => (free(st) ; st := regular)
+            | '/' when i - 1 = 0 => (free(st) ; st := post_block_comment)
             | '/' => (free(st) ; st := post_asterisk_in_block_comment_first_line(i - 1))
             | '*' => ()
             | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment(i))
             | _ => ()
         end
-      | post_newline_whitespace() => 
+      | post_newline_whitespace() =>
         begin
           case+ c of
             | '\'' => (free(st) ; st := post_tick)
@@ -216,7 +219,7 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | '\t' => ()
             | _ => (free(st) ; st := regular)
         end
-      | ~post_tick() => 
+      | ~post_tick() =>
         begin
           case+ c of
             | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
@@ -224,13 +227,13 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | _ => st := maybe_close_char
         end
       | ~post_backslash_after_tick() => st := in_char
-      | in_char() => 
+      | in_char() =>
         begin
           case+ c of
             | '\'' => (free(st) ; st := regular)
             | _ => ()
         end
-      | ~maybe_close_char() => 
+      | ~maybe_close_char() =>
         begin
           case+ c of
             | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
@@ -239,7 +242,7 @@ implement advance_char$lang<parse_state_rs> (c, st, file_st) =
             | 'r' => st := post_r
             | _ => st := regular
         end
-      | post_block_comment() => 
+      | post_block_comment() =>
         begin
           case+ c of
             | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
