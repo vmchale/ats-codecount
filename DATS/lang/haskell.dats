@@ -4,7 +4,7 @@ staload "SATS/lang/common.sats"
 
 #include "DATS/lang/common.dats"
 
-implement free_st (st) =
+implement free_st_hs (st) =
   case+ st of
     | ~in_string() => ()
     | ~in_block_comment (_) => ()
@@ -57,7 +57,7 @@ implement parse_state_hs_tostring (st) =
     | post_lbrace_in_block_comment_first_line (i) => "post_lbrace_in_block_comment_first_line(" + tostring_int(i) + ")"
 
 implement free$lang<parse_state_hs> (st) =
-  free_st(st)
+  free_st_hs(st)
 
 implement advance_char$lang<parse_state_hs> (c, st, file_st) =
   case+ st of

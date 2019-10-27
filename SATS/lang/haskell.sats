@@ -25,6 +25,6 @@ datavtype parse_state_hs =
 
 fn parse_state_hs_tostring(st : &parse_state_hs >> _) : string
 
-fn free_st(parse_state_hs) : void
+fn free_st_hs(parse_state_hs) : void
 
-overload free with free_st
+overload free with free_st_hs
