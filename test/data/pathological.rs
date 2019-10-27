@@ -10,6 +10,12 @@ fn return_str() -> &'static str {
     "###
 }
 
+fn normie_str() -> &'static str {
+    "This is a
+    string literal
+    //"
+}
+
 fn return_char() -> char {
     '"'
 } /* first line of block comment
