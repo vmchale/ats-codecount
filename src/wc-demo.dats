@@ -9,6 +9,7 @@
 #include "DATS/lang/dhall.dats"
 #include "DATS/lang/futhark.dats"
 #include "DATS/lang/egison.dats"
+#include "DATS/lang/rust.dats"
 #include "DATS/pointer.dats"
 
 fn prext(fp : string) : void =
@@ -25,6 +26,7 @@ fn prext(fp : string) : void =
       | "dhall" => filecount<parse_state_dhall>(fp)
       | "fut" => filecount<parse_state_fut>(fp)
       | "egi" => filecount<parse_state_egi>(fp)
+      | "rs" => filecount<parse_state_rs>(fp)
       | _ => prerr!("Unknown file type\n")
     prval () = pf(str)
   in end
