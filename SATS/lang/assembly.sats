@@ -1,4 +1,4 @@
-// deal with these fucking horrible character escapes: https://ftp.gnu.org/old-gnu/Manuals/gas-2.9.1/html_chapter/as_3.html#SEC32
+// see: https://ftp.gnu.org/old-gnu/Manuals/gas-2.9.1/html_chapter/as_3.html#SEC32
 // https://stackoverflow.com/questions/33246811/how-to-use-character-literals-in-gnu-gas-to-replace-numbers
 datavtype parse_state_as =
   | line_comment
