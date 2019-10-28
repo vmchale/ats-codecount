@@ -42,9 +42,8 @@ fn {a:vt@ype} count_file_buf { l : addr | l != null }(pf : !bytes_v(l, BUFSZ) | 
           empty_file
         else
           let
-            var fb_prf = bounded(file_bytes)
-            prval () = lt_bufsz(fb_prf)
-            var acc = count_for_loop<a>(pf | p, st, fb_prf)
+            prval () = lt_bufsz(file_bytes)
+            var acc = count_for_loop<a>(pf | p, st, file_bytes)
           in
             acc + loop(pf | inp, st, p)
           end
