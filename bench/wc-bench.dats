@@ -26,9 +26,9 @@ fn harness_naive() : void =
       in end
   in end
 
-fn harness_filecount_c() : void =
+fn harness_filecount_c(fp : string) : void =
   let
-    var inp = fopen("bench/data/sqlite3.c", file_mode_r)
+    var inp = fopen(fp, file_mode_r)
     val () = if FILEptr_is_null(inp) then
       let
         val () = fp_is_null(inp)
@@ -72,14 +72,32 @@ fn harness_filecount_dhall() : void =
   in end
 
 val harness_naive_delay: io = lam () => harness_naive()
-val harness_filecount_c_delay: io = lam () => harness_filecount_c()
+val harness_filecount_c_delay: io = lam () =>
+    harness_filecount_c("bench/data/sqlite3.c")
+val harness_filecount_c_delay2: io = lam () =>
+    harness_filecount_c("bench/data/core.c")
 val harness_filecount_hs_delay: io = lam () => harness_filecount_hs()
-val harness_filecount_dhall_delay: io = lam () => harness_filecount_dhall()
+val harness_filecount_dhall_delay:
+  io = lam () => harness_filecount_dhall()
 
 implement main0 () =
   {
     val () = print_slope("sqlite.c (for loop)", 8, harness_naive_delay)
-    val () = print_slope("sqlite.c (filecount_c)", 6, harness_filecount_c_delay)
-    val () = print_slope("Distribution.Simple.Setup (filecount_hs)", 9, harness_filecount_hs_delay)
-    val () = print_slope("pkg-set.dhall (filecount_dhall)", 9, harness_filecount_dhall_delay)
+    val () = print_slope( "sqlite.c (filecount_c)"
+                        , 6
+                        , harness_filecount_c_delay
+                        )
+    val () = print_slope( "core.c (filecount_c)"
+                        , 9
+                        , harness_filecount_c_delay2
+                        )
+    val () = print_slope( "Distribution.Simple.Setup (filecount_hs)"
+                        , 9
+                        , harness_filecount_hs_delay
+                        )
+    val () = print_slope( "pkg-set.dhall (filecount_dhall)"
+                        , 9
+                        , harness_filecount_dhall_delay
+                        )
   }
+

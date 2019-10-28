@@ -3,6 +3,7 @@
 #include "share/HATS/atspre_staload_libats_ML.hats"
 #include "DATS/file.dats"
 #include "DATS/print.dats"
+#include "DATS/lang/assembly.dats"
 #include "DATS/lang/c.dats"
 #include "DATS/lang/haskell.dats"
 #include "DATS/lang/j.dats"
@@ -27,6 +28,7 @@ fn prext(fp : string) : void =
       | "fut" => filecount<parse_state_fut>(fp)
       | "egi" => filecount<parse_state_egi>(fp)
       | "rs" => filecount<parse_state_rs>(fp)
+      | "S" => filecount<parse_state_as>(fp)
       | _ => prerr!("Unknown file type\n")
     prval () = pf(str)
   in end
