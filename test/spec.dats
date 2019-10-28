@@ -4,6 +4,7 @@
 #include "DATS/file.dats"
 #include "DATS/pointer.dats"
 #include "DATS/lang/common.dats"
+#include "DATS/lang/assembly.dats"
 #include "DATS/lang/c.dats"
 #include "DATS/lang/dhall.dats"
 #include "DATS/lang/haskell.dats"
@@ -16,6 +17,13 @@ fn {a:vt@ype} file_test(expected : file, fp : string) : bool =
     case+ pre_actual of
       | ~Some_vt (actual) => actual = expected
       | ~None_vt() => false
+  end
+
+fn test_asm() : bool =
+  let
+    val expected = @{ lines = 22, blanks = 10, comments = 5, doc_comments = 0 } : file
+  in
+    file_test<parse_state_as>(expected, "test/data/pathological.S")
   end
 
 fn test_dhall() : bool =
@@ -68,7 +76,8 @@ implement main0 () =
     var n3 = @{ test_name = "setup_hs", test_result = test_setup_hs() }
     var n4 = @{ test_name = "pkg_set_dhall", test_result = test_pkg_set_dhall() }
     var n5 = @{ test_name = "rust", test_result = test_rs() }
-    var xs = n5 :: n4 :: n3 :: n2 :: n1 :: n0 :: nil
+    var n6 = @{ test_name = "asm", test_result = test_asm() }
+    var xs = n6 :: n5 :: n4 :: n3 :: n2 :: n1 :: n0 :: nil
     var total = list_vt_length(xs)
     val g = @{ group = "filecount", leaves = xs } : test_tree
     val () = iterate_list(g, 0, total)
