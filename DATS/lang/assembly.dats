@@ -46,7 +46,7 @@ implement init$lang<parse_state_as> (st) =
 
 implement advance_char$lang<parse_state_as> (c, st, file_st) =
   case- st of
-    | regular() => 
+    | regular() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
@@ -57,13 +57,13 @@ implement advance_char$lang<parse_state_as> (c, st, file_st) =
           | '"' => (free(st) ; st := in_string)
           | _ => ()
       end
-    | line_comment() => 
+    | line_comment() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
           | _ => ()
       end
-    | line_comment_regular() => 
+    | line_comment_regular() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
