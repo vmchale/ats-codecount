@@ -5,7 +5,7 @@
 
         .text
 
-        .byte 'J, '\J, '", '"', '\\, '\n
+        .byte 'J, '\J, '", '"', '\\, '\n, '\03, '\x0, '\X031
 
 # line comment
 _start:
