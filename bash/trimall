@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 git ls-files | xargs perl -i -pe 's/\s+\n/\n/'
-git checkout test/data/sqlite3.c
+git checkout bench/data/sqlite3.c
