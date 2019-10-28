@@ -13,7 +13,7 @@ castfn fp_is_null { l : addr | l == null }{m:fm} (FILEptr(l,m)) :<> void
 
 fn harness_naive() : void =
   let
-    var inp = fopen("test/data/sqlite3.c", file_mode_r)
+    var inp = fopen("bench/data/sqlite3.c", file_mode_r)
     val () = if FILEptr_is_null(inp) then
       let
         val () = fp_is_null(inp)
@@ -28,7 +28,7 @@ fn harness_naive() : void =
 
 fn harness_filecount_c() : void =
   let
-    var inp = fopen("test/data/sqlite3.c", file_mode_r)
+    var inp = fopen("bench/data/sqlite3.c", file_mode_r)
     val () = if FILEptr_is_null(inp) then
       let
         val () = fp_is_null(inp)
@@ -58,7 +58,7 @@ fn harness_filecount_hs() : void =
 
 fn harness_filecount_dhall() : void =
   let
-    var inp = fopen("test/data/pkg-set.dhall", file_mode_r)
+    var inp = fopen("bench/data/pkg-set.dhall", file_mode_r)
     val () = if FILEptr_is_null(inp) then
       let
         val () = fp_is_null(inp)

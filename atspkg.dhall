@@ -3,7 +3,7 @@ let prelude = https://hackage.haskell.org/package/ats-pkg/src/dhall/atspkg-prelu
 in prelude.default ⫽
   { bench =
     [ prelude.bin ⫽
-      { src = "test/wc-bench.dats"
+      { src = "bench/wc-bench.dats"
       , target = "${prelude.atsProject}/wc-bench"
       , gcBin = True
       }

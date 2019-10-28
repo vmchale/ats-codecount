@@ -29,7 +29,7 @@ fn test_pkg_set_dhall() : bool =
   let
     val expected = @{ lines = 3874, blanks = 369, comments = 59, doc_comments = 0 } : file
   in
-    file_test<parse_state_dhall>(expected, "test/data/pkg-set.dhall")
+    file_test<parse_state_dhall>(expected, "bench/data/pkg-set.dhall")
   end
 
 fn test_c() : bool =
