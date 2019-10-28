@@ -29,6 +29,8 @@ fn prext(fp : string) : void =
       | "egi" => filecount<parse_state_egi>(fp)
       | "rs" => filecount<parse_state_rs>(fp)
       | "S" => filecount<parse_state_as>(fp)
+      | "s" => filecount<parse_state_as>(fp)
+      | "asm" => filecount<parse_state_as>(fp)
       | _ => prerr!("Unknown file type\n")
     prval () = pf(str)
   in end

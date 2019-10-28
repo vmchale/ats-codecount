@@ -45,27 +45,105 @@ implement init$lang<parse_state_as> (st) =
   st := post_newline_whitespace
 
 implement advance_char$lang<parse_state_as> (c, st, file_st) =
-  case- st of
-    | regular() =>
-      begin
-        case+ c of
-          | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-          | '#' => (free(st) ; st := line_comment_regular)
-          | ';' => (free(st) ; st := line_comment_regular)
-          | '/' => (free(st) ; st := post_slash_regular)
-          | '\'' => (free(st) ; st := post_tick)
-          | '"' => (free(st) ; st := in_string)
-          | _ => ()
-      end
-    | line_comment() =>
-      begin
-        case+ c of
-          | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
-          | _ => ()
-      end
-    | line_comment_regular() =>
-      begin
-        case+ c of
-          | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-          | _ => ()
-      end
+  let
+    fn pr_warning() : void =
+      prerr!("\33[33mWarning:\33[0m inconsistent state in Dhall lexer.\n")
+  in
+    case+ st of
+      | regular() =>
+        begin
+          case+ c of
+            | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+            | '#' => (free(st) ; st := line_comment_regular)
+            | ';' => (free(st) ; st := line_comment_regular)
+            | '/' => (free(st) ; st := post_slash_regular)
+            | '\'' => (free(st) ; st := post_tick)
+            | '"' => (free(st) ; st := in_string)
+            | _ => ()
+        end
+      | line_comment() =>
+        begin
+          case+ c of
+            | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
+            | _ => ()
+        end
+      | line_comment_regular() =>
+        begin
+          case+ c of
+            | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+            | _ => ()
+        end
+      | in_string() =>
+        begin
+          case+ c of
+            | '\\' => (free(st) ; st := post_backslash_in_string)
+            | '"' => (free(st) ; st := regular)
+            | _ => ()
+        end
+      | ~post_backslash_in_string() => st := in_string
+      | post_block_comment() =>
+        begin
+          case+ c of
+            | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
+            | ' ' => ()
+            | '\t' => ()
+            | '#' => (free(st) ; st := line_comment)
+            | '\'' => (free(st) ; st := post_tick)
+            | '"' => (free(st) ; st := in_string)
+            | '/' => (free(st) ; st := post_slash)
+            | _ => (free(st) ; st := regular)
+        end
+      | in_block_comment() =>
+        begin
+          case+ c of
+            | '\n' => file_st.comments := file_st.comments + 1
+            | '*' => (free(st) ; st := post_asterisk_in_block_comment)
+            | _ => ()
+        end
+      | ~post_slash() =>
+        begin
+          case+ c of
+            | '*' => st := in_block_comment
+            | _ => (pr_warning() ; st := regular)
+        end
+      | post_asterisk_in_block_comment() =>
+        begin
+          case+ c of
+            | '*' => ()
+            | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := in_block_comment)
+            | '/' => (free(st) ; st := post_block_comment)
+            | _ => (free(st) ; st := in_block_comment)
+        end
+      | post_newline_whitespace() =>
+        begin
+          case+ c of
+            | '\n' => (free(st) ; file_st.blanks := file_st.blanks + 1 ; st := post_newline_whitespace)
+            | '#' => (free(st) ; st := line_comment)
+            | ';' => (free(st) ; st := line_comment)
+            | '/' => (free(st) ; st := post_slash)
+            | ' ' => ()
+            | '\t' => ()
+            | _ => (free(st) ; st := regular)
+        end
+      | in_block_comment_line_end() =>
+        begin
+          case+ c of
+            | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment)
+            | '*' => (free(st) ; st := post_asterisk_in_block_comment_line_end)
+            | _ => ()
+        end
+      | ~post_slash_regular() =>
+        begin
+          case+ c of
+            | '*' => st := in_block_comment_line_end
+            | _ => (pr_warning() ; st := regular)
+        end
+      | post_asterisk_in_block_comment_line_end() =>
+        begin
+          case+ c of
+            | '*' => ()
+            | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment)
+            | '/' => (free(st) ; st := regular)
+            | _ => (free(st) ; st := in_block_comment)
+        end
+  end
