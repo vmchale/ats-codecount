@@ -26,6 +26,13 @@ fn test_asm() : bool =
     file_test<parse_state_as>(expected, "test/data/pathological.S")
   end
 
+fn test_instr() : bool =
+  let
+    val expected = @{ lines = 957, blanks = 53, comments = 225, doc_comments = 0 } : file
+  in
+    file_test<parse_state_as>(expected, "test/data/instr.asm")
+  end
+
 fn test_dhall() : bool =
   let
     val expected = @{ lines = 16, blanks = 2, comments = 4, doc_comments = 0 } : file
@@ -77,7 +84,8 @@ implement main0 () =
     var n4 = @{ test_name = "pkg_set_dhall", test_result = test_pkg_set_dhall() }
     var n5 = @{ test_name = "rust", test_result = test_rs() }
     var n6 = @{ test_name = "asm", test_result = test_asm() }
-    var xs = n6 :: n5 :: n4 :: n3 :: n2 :: n1 :: n0 :: nil
+    var n7 = @{ test_name = "instr_asm", test_result = test_instr() }
+    var xs = n7 :: n6 :: n5 :: n4 :: n3 :: n2 :: n1 :: n0 :: nil
     var total = list_vt_length(xs)
     val g = @{ group = "filecount", leaves = xs } : test_tree
     val () = iterate_list(g, 0, total)
