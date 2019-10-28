@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-file="bench/data/core.c"
+file="bench/data/fpsp.S"
 bench "./target/wc-demo $file" \
     "loc -u $file" \
     "tokei --no-ignore-vcs --no-ignore $file" \
