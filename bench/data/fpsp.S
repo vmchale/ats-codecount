@@ -1,4 +1,4 @@
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 MOTOROLA MICROPROCESSOR & MEMORY TECHNOLOGY GROUP
 M68000 Hi-Performance Microprocessor Division
 M68060 Software Package
@@ -25,7 +25,7 @@ so long as this entire notice is retained without alteration in any modified and
 redistributed versions, and that such modified versions are clearly identified as such.
 No licenses are granted by implication, estoppel or otherwise under any patents
 or trademarks of Motorola, Inc.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 #
 # freal.s:
 #	This file is appended to the top of the 060FPSP package
