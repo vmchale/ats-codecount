@@ -77,14 +77,15 @@ implement advance_char$lang<parse_state_hs> (c, st, file_st) =
           | '\{' => (free(st) ; st := post_lbrace_in_block_comment(n))
           | _ => ()
       end
-    | post_lbrace() =>
+    | ~post_lbrace() =>
       begin
         case+ c of
-          | '-' => (free(st) ; st := in_block_comment(1))
-          | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-          | '\{' => ()
-          | '"' => (free(st) ; st := in_string)
-          | _ => (free(st) ; st := regular)
+          | '-' => st := in_block_comment(1)
+          | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+          | '\{' => st := post_lbrace_regular
+          | '"' => st := in_string
+          | '\'' => st := post_tick
+          | _ => st := regular
       end
     | post_lbrace_regular() =>
       begin
@@ -93,6 +94,7 @@ implement advance_char$lang<parse_state_hs> (c, st, file_st) =
           | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
           | '\{' => ()
           | '"' => (free(st) ; st := in_string)
+          | '\'' => (free(st) ; st := post_tick)
           | _ => (free(st) ; st := regular)
       end
     | ~post_backslash_in_string() =>

@@ -108,15 +108,15 @@ implement advance_char$lang<parse_state_dhall> (c, st, file_st) =
             | '-' => (free(st) ; st := post_hyphen_in_block_comment(i))
             | _ => ()
         end
-      | post_lbrace() =>
+      | ~post_lbrace() =>
         begin
           case+ c of
-            | '-' => (free(st) ; st := in_block_comment(1))
-            | '\{' => ()
-            | '\'' => (free(st) ; st := post_tick)
-            | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
-            | '"' => (free(st) ; st := in_string)
-            | _ => (free(st) ; st := regular)
+            | '-' => st := in_block_comment(1)
+            | '\{' => st := post_lbrace_regular
+            | '\'' => st := post_tick
+            | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
+            | '"' => st := in_string
+            | _ => st := regular
         end
       | post_lbrace_regular() =>
         begin
