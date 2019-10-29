@@ -5,11 +5,12 @@
 #include "DATS/print.dats"
 #include "DATS/lang/assembly.dats"
 #include "DATS/lang/c.dats"
+#include "DATS/lang/dhall.dats"
+#include "DATS/lang/egison.dats"
+#include "DATS/lang/futhark.dats"
 #include "DATS/lang/haskell.dats"
 #include "DATS/lang/j.dats"
-#include "DATS/lang/dhall.dats"
-#include "DATS/lang/futhark.dats"
-#include "DATS/lang/egison.dats"
+#include "DATS/lang/python.dats"
 #include "DATS/lang/rust.dats"
 #include "DATS/pointer.dats"
 
@@ -31,6 +32,7 @@ fn prext(fp : string) : void =
       | "S" => filecount<parse_state_as>(fp)
       | "s" => filecount<parse_state_as>(fp)
       | "asm" => filecount<parse_state_as>(fp)
+      | "py" => filecount<parse_state_py>(fp)
       | _ => prerr!("Unknown file type\n")
     prval () = pf(str)
   in end
