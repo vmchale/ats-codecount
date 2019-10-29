@@ -22,7 +22,7 @@ fn harness_naive() : void =
     else
       let
         var newlines = count_file_for_loop(inp)
-        val () = fclose1_exn(inp)
+        val () = fclose_silent(inp)
       in end
   in end
 
@@ -37,7 +37,7 @@ fn harness_filecount_c(fp : string) : void =
     else
       let
         var newlines = count_file<parse_state_c>(inp)
-        val () = fclose1_exn(inp)
+        val () = fclose_silent(inp)
       in end
   in end
 
@@ -52,7 +52,7 @@ fn harness_filecount_asm() : void =
     else
       let
         var newlines = count_file<parse_state_c>(inp)
-        val () = fclose1_exn(inp)
+        val () = fclose_silent(inp)
       in end
   in end
 
@@ -67,7 +67,7 @@ fn harness_filecount_hs() : void =
     else
       let
         var newlines = count_file<parse_state_hs>(inp)
-        val () = fclose1_exn(inp)
+        val () = fclose_silent(inp)
       in end
   in end
 
@@ -82,7 +82,7 @@ fn harness_filecount_dhall() : void =
     else
       let
         var newlines = count_file<parse_state_dhall>(inp)
-        val () = fclose1_exn(inp)
+        val () = fclose_silent(inp)
       in end
   in end
 

@@ -86,7 +86,7 @@ implement {a} file$lang (fp) =
     else
       let
         var newlines = count_file<a>(inp)
-        val () = fclose1_exn(inp)
+        val () = fclose_silent(inp)
       in
         Some_vt(newlines)
       end

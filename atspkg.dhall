@@ -23,4 +23,5 @@ in prelude.default ⫽
     ]
   , dependencies = prelude.mapPlainDeps [ "ats-bench", "specats" ]
   , cflags = [ "-O2", "-flto" ]
+  , atsLib = False
   }

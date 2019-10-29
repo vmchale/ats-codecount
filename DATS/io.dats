@@ -11,3 +11,7 @@ fn freadc { l : addr | l != null }{ sz : nat | sz >= 1 }(pf : !bytes_v(l, sz)
   in
     $UN.cast(n)
   end
+
+extern
+fn fclose_silent(FILEptr1) : void =
+  "mac#fclose"
