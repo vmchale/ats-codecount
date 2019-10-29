@@ -21,11 +21,18 @@ fn {a:vt@ype} file_test(expected : file, fp : string) : bool =
       | ~None_vt() => false
   end
 
-fn test_idr() : bool =
+fn test_ctx() : bool =
   let
     var expected = @{ lines = 1612, blanks = 213, comments = 161, doc_comments = 0 } : file
   in
     file_test<parse_state_idr>(expected, "test/data/Context.idr")
+  end
+
+fn test_idr() : bool =
+  let
+    var expected = @{ lines = 15, blanks = 7, comments = 3, doc_comments = 1 } : file
+  in
+    file_test<parse_state_idr>(expected, "test/data/Pathological.idr")
   end
 
 fn test_py() : bool =
@@ -101,8 +108,9 @@ implement main0 () =
     var n5 = @{ test_name = "rust", test_result = test_rs() }
     var n6 = @{ test_name = "asm", test_result = test_asm() }
     var n7 = @{ test_name = "instr_asm", test_result = test_instr() }
-    var n8 = @{ test_name = "context_idr", test_result = test_idr() }
-    var xs = n8 :: n7 :: n6 :: n5 :: n4 :: n3 :: n2 :: n1 :: n0 :: nil
+    var n8 = @{ test_name = "context_idr", test_result = test_ctx() }
+    var n9 = @{ test_name = "idris", test_result = test_idr() }
+    var xs = n9 :: n8 :: n7 :: n6 :: n5 :: n4 :: n3 :: n2 :: n1 :: n0 :: nil
     var total = list_vt_length(xs)
     val g = @{ group = "filecount", leaves = xs } : test_tree
     val () = iterate_list(g, 0, total)
