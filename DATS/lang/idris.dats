@@ -77,19 +77,19 @@ implement init$lang<parse_state_idr> (st) =
 
 implement advance_char$lang<parse_state_idr> (c, st, file_st) =
   case+ st of
-    | line_comment() => 
+    | line_comment() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
           | _ => ()
       end
-    | line_comment_regular() => 
+    | line_comment_regular() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
           | _ => ()
       end
-    | regular() => 
+    | regular() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
@@ -98,7 +98,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\{' => (free(st) ; st := post_lbrace_regular)
           | _ => ()
       end
-    | post_newline_whitespace() => 
+    | post_newline_whitespace() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.blanks := file_st.blanks + 1 ; st := post_newline_whitespace)
@@ -110,7 +110,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\t' => ()
           | _ => (free(st) ; st := regular)
       end
-    | ~post_lbrace() => 
+    | ~post_lbrace() =>
       begin
         case+ c of
           | '\{' => st := post_lbrace_regular
@@ -120,7 +120,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\'' => st := post_tick
           | _ => st := regular
       end
-    | ~post_hyphen() => 
+    | ~post_hyphen() =>
       begin
         case+ c of
           | '-' => st := line_comment
@@ -130,7 +130,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\{' => st := post_lbrace
           | _ => st := regular
       end
-    | ~post_hyphen_regular() => 
+    | ~post_hyphen_regular() =>
       begin
         case+ c of
           | '-' => st := line_comment_regular
@@ -140,7 +140,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\{' => st := post_lbrace_regular
           | _ => st := regular
       end
-    | ~post_vbar() => 
+    | ~post_vbar() =>
       begin
         case+ c of
           | '|' => st := post_vbar2
@@ -151,7 +151,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\'' => st := post_tick
           | _ => st := regular
       end
-    | ~post_vbar2() => 
+    | ~post_vbar2() =>
       begin
         case+ c of
           | '|' => st := in_doc_comment
@@ -162,19 +162,19 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\'' => st := post_tick
           | _ => st := regular
       end
-    | in_doc_comment() => 
+    | in_doc_comment() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.doc_comments := file_st.doc_comments + 1 ; st := post_newline_whitespace)
           | _ => ()
       end
-    | ~post_quote() => 
+    | ~post_quote() =>
       begin
         case+ c of
           | '"' => st := post_quote2
           | _ => st := in_string
       end
-    | ~post_quote2() => 
+    | ~post_quote2() =>
       begin
         case+ c of
           | '"' => st := in_multiline_string
@@ -184,21 +184,21 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
           | _ => st := regular
       end
-    | in_string() => 
+    | in_string() =>
       begin
         case+ c of
           | '\\' => (free(st) ; st := post_backslash_in_string)
           | '"' => (free(st) ; st := regular)
           | _ => ()
       end
-    | in_multiline_string() => 
+    | in_multiline_string() =>
       begin
         case+ c of
           | '\n' => file_st.lines := file_st.lines + 1
           | '"' => (free(st) ; st := post_quote_in_multiline_string)
           | _ => ()
       end
-    | post_lbrace_regular() => 
+    | post_lbrace_regular() =>
       begin
         case+ c of
           | '-' => (free(st) ; st := in_block_comment_first_line(1))
@@ -208,7 +208,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\'' => (free(st) ; st := post_tick)
           | _ => (free(st) ; st := regular)
       end
-    | in_block_comment (i) => 
+    | in_block_comment (i) =>
       begin
         case+ c of
           | '-' => (free(st) ; st := post_hyphen_in_block_comment(i))
@@ -216,7 +216,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\{' => (free(st) ; st := post_lbrace_in_block_comment(i))
           | _ => ()
       end
-    | post_lbrace_in_block_comment (i) => 
+    | post_lbrace_in_block_comment (i) =>
       begin
         case+ c of
           | '-' => (free(st) ; st := in_block_comment(i + 1))
@@ -224,7 +224,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := in_block_comment(i))
           | _ => (free(st) ; st := in_block_comment(i))
       end
-    | post_hyphen_in_block_comment (i) => 
+    | post_hyphen_in_block_comment (i) =>
       begin
         case+ c of
           | '}' when i - 1 = 0 => (free(st) ; st := post_block_comment)
@@ -234,7 +234,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\{' => (free(st) ; st := post_lbrace_in_block_comment(i))
           | _ => (free(st) ; st := in_block_comment(i))
       end
-    | post_block_comment() => 
+    | post_block_comment() =>
       begin
         case+ c of
           | '\n' => (free(st) ; file_st.comments := file_st.comments + 1 ; st := post_newline_whitespace)
@@ -246,7 +246,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\'' => (free(st) ; st := post_tick)
           | _ => (free(st) ; st := regular)
       end
-    | in_block_comment_first_line (i) => 
+    | in_block_comment_first_line (i) =>
       begin
         case+ c of
           | '-' => (free(st) ; st := post_hyphen_in_block_comment_first_line(i))
@@ -254,7 +254,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\{' => (free(st) ; st := post_lbrace_in_block_comment_first_line(i))
           | _ => ()
       end
-    | post_lbrace_in_block_comment_first_line (i) => 
+    | post_lbrace_in_block_comment_first_line (i) =>
       begin
         case+ c of
           | '-' => (free(st) ; st := in_block_comment_first_line(i + 1))
@@ -262,7 +262,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := in_block_comment(i))
           | _ => (free(st) ; st := in_block_comment_first_line(i))
       end
-    | post_hyphen_in_block_comment_first_line (i) => 
+    | post_hyphen_in_block_comment_first_line (i) =>
       begin
         case+ c of
           | '}' when i - 1 = 0 => (free(st) ; st := post_block_comment)
@@ -272,7 +272,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '\{' => (free(st) ; st := post_lbrace_in_block_comment_first_line(i))
           | _ => (free(st) ; st := in_block_comment_first_line(i))
       end
-    | ~post_tick() => 
+    | ~post_tick() =>
       begin
         case+ c of
           | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
@@ -283,7 +283,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | _ => st := maybe_close_char
       end
     | ~post_backslash_after_tick() => st := maybe_close_char
-    | ~maybe_close_char() => 
+    | ~maybe_close_char() =>
       begin
         case+ c of
           | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
@@ -293,21 +293,21 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | _ => st := regular
       end
     | ~post_backslash_in_string() => st := in_string
-    | ~post_quote_in_multiline_string() => 
+    | ~post_quote_in_multiline_string() =>
       begin
         case+ c of
           | '"' => st := post_quote2_in_multiline_string
           | '\n' => (file_st.lines := file_st.lines + 1 ; st := in_multiline_string)
           | _ => st := in_multiline_string
       end
-    | ~post_quote2_in_multiline_string() => 
+    | ~post_quote2_in_multiline_string() =>
       begin
         case+ c of
           | '"' => st := regular
           | '\n' => (file_st.lines := file_st.lines + 1 ; st := in_multiline_string)
           | _ => st := in_multiline_string
       end
-    | ~hyphen_after_tick() => 
+    | ~hyphen_after_tick() =>
       begin
         case+ c of
           | '-' => st := line_comment_regular
@@ -316,7 +316,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '"' => st := in_string
           | _ => st := regular
       end
-    | ~lbrace_after_tick() => 
+    | ~lbrace_after_tick() =>
       begin
         case+ c of
           | '-' => st := in_block_comment_first_line(1)
