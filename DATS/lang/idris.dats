@@ -94,6 +94,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
         case+ c of
           | '\n' => (free(st) ; file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
           | '"' => (free(st) ; st := post_quote)
+          | '\'' => (free(st) ; st := post_tick)
           | '-' => (free(st) ; st := post_hyphen_regular)
           | '\{' => (free(st) ; st := post_lbrace_regular)
           | _ => ()
@@ -106,6 +107,7 @@ implement advance_char$lang<parse_state_idr> (c, st, file_st) =
           | '"' => (free(st) ; st := post_quote)
           | '-' => (free(st) ; st := post_hyphen)
           | '\{' => (free(st) ; st := post_lbrace)
+          | '\'' => (free(st) ; st := post_tick)
           | ' ' => ()
           | '\t' => ()
           | _ => (free(st) ; st := regular)
