@@ -222,7 +222,7 @@ implement advance_char$lang<parse_state_hs> (c, st, file_st) =
         case+ c of
           | '\n' => (file_st.lines := file_st.lines + 1 ; st := post_newline_whitespace)
           | '"' => st := in_string
-          | '-' => st := post_hyphen
+          | '-' => st := post_hyphen_regular
           | '\{' => st := post_lbrace_regular
           | _ => st := regular
       end
