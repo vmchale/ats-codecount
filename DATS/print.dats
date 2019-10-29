@@ -10,3 +10,5 @@ implement file_tostring (f) =
   + tostring_int(f.blanks)
   + " Comments: "
   + tostring_int(f.comments)
+  + " Doc comments: "
+  + tostring_int(f.doc_comments)

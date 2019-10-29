@@ -9,6 +9,7 @@
 #include "DATS/lang/egison.dats"
 #include "DATS/lang/futhark.dats"
 #include "DATS/lang/haskell.dats"
+#include "DATS/lang/idris.dats"
 #include "DATS/lang/j.dats"
 #include "DATS/lang/python.dats"
 #include "DATS/lang/rust.dats"
@@ -33,6 +34,8 @@ fn prext(fp : string) : void =
       | "s" => filecount<parse_state_as>(fp)
       | "asm" => filecount<parse_state_as>(fp)
       | "py" => filecount<parse_state_py>(fp)
+      | "idr" => filecount<parse_state_idr>(fp)
+      | "blod" => filecount<parse_state_idr>(fp)
       | _ => prerr!("Unknown file type\n")
     prval () = pf(str)
   in end
