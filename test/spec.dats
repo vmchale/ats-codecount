@@ -8,6 +8,7 @@
 #include "DATS/lang/c.dats"
 #include "DATS/lang/dhall.dats"
 #include "DATS/lang/haskell.dats"
+#include "DATS/lang/python.dats"
 #include "DATS/lang/rust.dats"
 
 fn {a:vt@ype} file_test(expected : file, fp : string) : bool =
@@ -17,6 +18,13 @@ fn {a:vt@ype} file_test(expected : file, fp : string) : bool =
     case+ pre_actual of
       | ~Some_vt (actual) => actual = expected
       | ~None_vt() => false
+  end
+
+fn test_py() : bool =
+  let
+    val expected = @{ lines = 16, blanks = 3, comments = 1, doc_comments = 0 } : file
+  in
+    file_test<parse_state_py>(expected, "test/data/pathological.py")
   end
 
 fn test_asm() : bool =
