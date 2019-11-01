@@ -30,7 +30,7 @@ fn test_ctx() : bool =
 
 fn test_idr() : bool =
   let
-    var expected = @{ lines = 15, blanks = 7, comments = 3, doc_comments = 1 } : file
+    var expected = @{ lines = 15, blanks = 7, comments = 4, doc_comments = 1 } : file
   in
     file_test<parse_state_idr>(expected, "test/data/Pathological.idr")
   end
