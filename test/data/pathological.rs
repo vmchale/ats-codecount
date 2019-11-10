@@ -3,7 +3,7 @@ fn return_str() -> &'static str {
     r###"
     This is a raw string literal.
 
-    #"
+    "#
 
     // This should not be counted as a comment.
     /* nor should this!
