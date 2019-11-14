@@ -1,0 +1,32 @@
+sqlite.c (for loop)
+    estimate: 803.218130 μs
+sqlite.c (filecount_c)
+    estimate: 18.030437 ms
+core.c (filecount_c)
+    estimate: 743.320752 μs
+fpsp.S (filecount_asm)
+    estimate: 1.813435 ms
+Distribution.Simple.Setup (filecount_hs)
+    estimate: 346.720204 μs
+pkg-set.dhall (filecount_dhall)
+    estimate: 507.592074 μs
+
+Gnuplot not found, disabling plotting
+Benchmarking bytecount (sqlite3.c): Collecting 100 samples in estimated 8.5374 s                                                                                bytecount (sqlite3.c)   time:   [790.68 us 791.91 us 793.22 us]
+Found 4 outliers among 100 measurements (4.00%)
+  1 (1.00%) high mild
+  3 (3.00%) high severe
+
+Benchmarking bytecount (unbuffered) (sqlite3.c): Warming up for 3.0000 s
+Warning: Unable to complete 100 samples in 5.0s. You may wish to increase target time to 42.9s or reduce sample count to 20
+Benchmarking bytecount (unbuffered) (sqlite3.c): Collecting 100 samples in estim                                                                                bytecount (unbuffered) (sqlite3.c)                        
+                        time:   [8.4357 ms 8.4559 ms 8.4764 ms]
+Found 3 outliers among 100 measurements (3.00%)
+  1 (1.00%) low mild
+  2 (2.00%) high mild
+
+Benchmarking bytecount (iterator): Warming up for 3.0000 s
+Warning: Unable to complete 100 samples in 5.0s. You may wish to increase target time to 15.9s or reduce sample count to 30
+Benchmarking bytecount (iterator): Collecting 100 samples in estimated 15.933 s                                                                                 bytecount (iterator)    time:   [3.2022 ms 3.2158 ms 3.2276 ms]
+
+Gnuplot not found, disabling plotting
