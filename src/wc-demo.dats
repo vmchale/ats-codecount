@@ -10,6 +10,7 @@
 #include "DATS/lang/haskell.dats"
 #include "DATS/lang/idris.dats"
 #include "DATS/lang/j.dats"
+#include "DATS/lang/json.dats"
 #include "DATS/lang/python.dats"
 #include "DATS/lang/rust.dats"
 #include "DATS/pointer.dats"
@@ -35,6 +36,7 @@ fn prext(fp : string) : void =
       | "py" => filecount<parse_state_py>(fp)
       | "idr" => filecount<parse_state_idr>(fp)
       | "blod" => filecount<parse_state_idr>(fp)
+      | "json" => filecount<parse_state_json>(fp)
       | _ => prerr!("Unknown file type\n")
     prval () = pf(str)
   in end
