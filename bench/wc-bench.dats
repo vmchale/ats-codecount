@@ -93,14 +93,14 @@ val harness_filecount_c_delay2: io = lam () =>
     harness_filecount_c("bench/data/core.c")
 val harness_filecount_hs_delay: io = lam () => harness_filecount_hs()
 val harness_filecount_dhall_delay: io = lam () => harness_filecount_dhall()
-val harness_filecount_asm: io = lam () => harness_filecount_asm()
+val harness_filecount_asm_delay: io = lam () => harness_filecount_asm()
 
 implement main0 () =
   {
     val () = print_slope("sqlite.c (for loop)", 8, harness_naive_delay)
     val () = print_slope("sqlite.c (filecount_c)", 6, harness_filecount_c_delay)
     val () = print_slope("core.c (filecount_c)", 9, harness_filecount_c_delay2)
-    val () = print_slope("fpsp.S (filecount_asm)", 8, harness_filecount_asm)
+    val () = print_slope("fpsp.S (filecount_asm)", 8, harness_filecount_asm_delay)
     val () = print_slope("Distribution.Simple.Setup (filecount_hs)", 9, harness_filecount_hs_delay)
     val () = print_slope("pkg-set.dhall (filecount_dhall)", 9, harness_filecount_dhall_delay)
   }
