@@ -1,5 +1,5 @@
 let atsCi =
-      https://raw.githubusercontent.com/vmchale/github-actions-dhall/master/ats-ci.dhall sha256:e2adcfc1331b0aab16eff30270ec225d7370ce1c3d8bba7d1782ae7a56589291
+      https://raw.githubusercontent.com/vmchale/github-actions-dhall/master/ats-ci.dhall sha256:d5aac850c2d5d6e6d7eeb2cf46c8b27592e5da17003802d6943b75dc9ec072ed
 
 in    atsCi.atsSteps
         [ atsCi.checkout

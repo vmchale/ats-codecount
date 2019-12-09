@@ -10,11 +10,11 @@ jobs:
         run: |
           export PATH=$HOME/.local/bin:$PATH
           atspkg -V
-          atspkg build -vv
+          atspkg build -vv 
       - name: "Test ATS"
         run: |
           export PATH=$HOME/.local/bin:$PATH
-          atspkg test -vv
+          atspkg test -vv 
 name: "Haskell CI"
 on:
   - push
