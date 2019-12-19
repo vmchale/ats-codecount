@@ -22,6 +22,7 @@ jobs:
           export PATH=$HOME/.cabal/bin:$PATH
           dhall-to-yaml --file dhall-ci.dhall
           dhall-to-yaml --file ci.dhall
+          dhall-to-yaml --file toml-ci.dhall
 name: "Dhall CI"
 on:
   - push
