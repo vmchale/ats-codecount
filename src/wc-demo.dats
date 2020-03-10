@@ -4,6 +4,7 @@
 #include "DATS/print.dats"
 #include "DATS/lang/assembly.dats"
 #include "DATS/lang/c.dats"
+#include "DATS/lang/csv.dats"
 #include "DATS/lang/dhall.dats"
 #include "DATS/lang/egison.dats"
 #include "DATS/lang/futhark.dats"
@@ -37,6 +38,7 @@ fn prext(fp : string) : void =
       | "idr" => filecount<parse_state_idr>(fp)
       | "blod" => filecount<parse_state_idr>(fp)
       | "json" => filecount<parse_state_json>(fp)
+      | "csv" => filecount<parse_state_csv>(fp)
       | _ => prerr!("Unknown file type\n")
     prval () = pf(str)
   in end
