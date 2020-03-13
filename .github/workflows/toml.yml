@@ -3,8 +3,8 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: "actions/checkout@v1"
-      - name: "Check TOML"
+      - name: Check TOML
         run: "curl -sL https://raw.githubusercontent.com/vmchale/tomlcheck/master/sh/check | sh -s .atsfmt.toml --file bytecount/Cargo.toml"
-name: "Toml check"
+name: Toml check
 on:
   - push
