@@ -2,7 +2,6 @@ staload "libats/libc/SATS/stdio.sats"
 
 #include "$PATSHOMELOCS/ats-bench-0.3.3/bench.dats"
 #include "share/atspre_staload.hats"
-#include "DATS/wc.dats"
 #include "DATS/lang/c.dats"
 #include "DATS/lang/haskell.dats"
 #include "DATS/lang/dhall.dats"
@@ -10,21 +9,6 @@ staload "libats/libc/SATS/stdio.sats"
 
 extern
 castfn fp_is_null { l : addr | l == null }{m:fm} (FILEptr(l,m)) :<> void
-
-fn harness_naive() : void =
-  let
-    var inp = fopen("bench/data/sqlite3.c", file_mode_r)
-    val () = if FILEptr_is_null(inp) then
-      let
-        val () = fp_is_null(inp)
-        val () = println!("failed to open file")
-      in end
-    else
-      let
-        var newlines = count_file_for_loop(inp)
-        val () = fclose_silent(inp)
-      in end
-  in end
 
 fn harness_filecount_c(fp : string) : void =
   let
@@ -86,7 +70,6 @@ fn harness_filecount_dhall() : void =
       in end
   in end
 
-val harness_naive_delay: io = lam () => harness_naive()
 val harness_filecount_c_delay: io = lam () =>
     harness_filecount_c("bench/data/sqlite3.c")
 val harness_filecount_c_delay2: io = lam () =>
@@ -97,7 +80,6 @@ val harness_filecount_asm_delay: io = lam () => harness_filecount_asm()
 
 implement main0 () =
   {
-    val () = print_slope("sqlite.c (for loop)", 9, harness_naive_delay)
     val () = print_slope("sqlite.c (filecount_c)", 6, harness_filecount_c_delay)
     val () = print_slope("core.c (filecount_c)", 9, harness_filecount_c_delay2)
     val () = print_slope("fpsp.S (filecount_asm)", 8, harness_filecount_asm_delay)
