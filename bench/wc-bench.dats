@@ -2,6 +2,7 @@ staload "libats/libc/SATS/stdio.sats"
 
 #include "$PATSHOMELOCS/ats-bench-0.3.3/bench.dats"
 #include "share/atspre_staload.hats"
+#include "DATS/file.dats"
 #include "DATS/lang/c.dats"
 #include "DATS/lang/haskell.dats"
 #include "DATS/lang/dhall.dats"
