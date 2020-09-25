@@ -1,5 +1,5 @@
 let prelude =
-      https://hackage.haskell.org/package/ats-pkg/src/dhall/atspkg-prelude.dhall sha256:c04fe26a86f2e2bd5c67c17f213ee30379d520f5fad11254a8f17e936250e27e
+      https://hackage.haskell.org/package/ats-pkg/src/dhall/atspkg-prelude.dhall sha256:69bdde38a8cc01c91a1808ca3f45c29fe754c9ac96e91e6abd785508466399b4
 
 in  prelude.compilerMod
       prelude.gcc
